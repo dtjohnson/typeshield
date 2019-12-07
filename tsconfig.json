@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es6",        // Target ES6, which covers most browsers and Node.js
+        "module": "commonjs",   // Use CommonJS modules to support Node.js and browsers
+        "lib": ["es6"],         // Explicitly set the lib so we exclude DOM, which isn't fully supported in Node.js
+        "types": ["jest"],      // Remove any globals. Just add Jest for testing
+        "declaration": true,    // Generate .d.ts declaration files so packages can be imported into other TS projects
+        "declarationMap": true, // Generate map to ease use of packages
+        "sourceMap": true,      // Generate map to ease use of packages
+        "strict": true,         // Enable all strict type-checking options
+        "outDir": "dist",       // Output to the dist directory
+    }
+  }
+  

@@ -1,0 +1,45 @@
+{
+  "name": "guardian",
+  "version": "0.0.0",
+  "description": "TODO:",
+  "author": "Dave T. Johnson <dave@dtjohnson.net>",
+  "homepage": "https://github.com/dtjohnson/guardian",
+  "license": "ISC",
+  "main": "dist",
+  "types": "dist",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dtjohnson/guardian.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dtjohnson/guardian/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "@typescript-eslint/eslint-plugin": "^2.10.0",
+    "@typescript-eslint/parser": "^2.10.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-jsdoc": "^18.4.3",
+    "eslint-plugin-sort-imports-es6-autofix": "^0.5.0",
+    "http-server": "^0.12.0",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.2.0",
+    "typedoc": "^0.15.3",
+    "typescript": "^3.7.3"
+  },
+  "scripts": {
+    "start": "jest --watch",
+    "build": "npm run clean && npm run compile",
+    "compile": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf ./dist",
+    "docs": "typedoc --tsconfig tsconfig.build.json --out docs src/index.ts",
+    "serve-docs": "http-server -c-1 -o",
+    "test": "jest --no-cache",
+    "lint": "eslint --fix \"src/**/*.ts\"",
+    "prepublishOnly": "npm run build"
+  }
+}

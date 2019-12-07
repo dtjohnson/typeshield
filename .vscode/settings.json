@@ -1,0 +1,10 @@
+{
+    "eslint.validate": [
+        {
+            "language": "typescript",
+            "autoFix": true
+        }
+    ],
+    "eslint.autoFixOnSave": true,
+    "typescript.tsdk": "node_modules/typescript/lib"
+}
