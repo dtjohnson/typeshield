@@ -5,11 +5,13 @@
   "author": "Dave T. Johnson <dave@dtjohnson.net>",
   "homepage": "https://github.com/dtjohnson/guardian",
   "license": "ISC",
-  "main": "dist",
-  "types": "dist",
+  "main": "dist/cjs",
+  "module": "dist/esm",
+  "types": "dist/cjs",
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dtjohnson/guardian.git"
@@ -33,11 +35,12 @@
   },
   "scripts": {
     "start": "jest --watch",
-    "build": "npm run clean && npm run compile",
-    "compile": "tsc -p tsconfig.build.json",
+    "build": "npm run clean && npm run compile:cjs && npm run compile:esm",
+    "compile:cjs": "tsc -p tsconfig.cjs.json",
+    "compile:esm": "tsc -p tsconfig.esm.json",
     "clean": "rm -rf ./dist",
     "docs": "typedoc --tsconfig tsconfig.build.json --out docs src/index.ts",
-    "serve-docs": "http-server -c-1 -o",
+    "http": "http-server -c-1 -o",
     "test": "jest --no-cache",
     "lint": "eslint --fix \"src/**/*.ts\"",
     "prepublishOnly": "npm run build"

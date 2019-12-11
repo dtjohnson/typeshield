@@ -1,3 +1,11 @@
-export function foo() {
-
-}
+export * from './assert';
+export * from './is-defined';
+export * from './is-email';
+export * from './is-equal-to';
+export * from './is-instance-of';
+export * from './is-integer';
+export * from './is-match';
+export * from './is-null';
+export * from './is-number';
+export * from './is-string';
+export * from './is-undefined';

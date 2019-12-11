@@ -205,7 +205,7 @@
         "max-statements-per-line": "off", // Annoying
         "multiline-comment-style": "off", // Want to allow all
         "multiline-ternary": ["warn", "always-multiline"],
-        "new-cap": "warn",
+        "new-cap": "off", // Needed for decorators
         "new-parens": "error",
         "newline-per-chained-call": "warn",
         "no-array-constructor": "off", // Conflicts with TS rule
@@ -330,7 +330,7 @@
         "@typescript-eslint/explicit-function-return-type": ["warn", { "allowExpressions": true }],
         "@typescript-eslint/explicit-member-accessibility": "warn",
         "@typescript-eslint/func-call-spacing": "warn",
-        "@typescript-eslint/generic-type-naming": ["warn", "^[TUV][a-zA-Z]*$"],
+        "@typescript-eslint/generic-type-naming": ["warn", "^[TUV][a-zA-Z0-9]*$"],
         "@typescript-eslint/indent": "warn",
         "@typescript-eslint/interface-name-prefix": "warn",
         "@typescript-eslint/member-delimiter-style": "warn",
