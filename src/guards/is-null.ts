@@ -1,6 +1,6 @@
-import { Guard } from './types';
+import { Guard } from '../guard';
 import { isUndefined } from './is-undefined';
-import { or } from './operators';
+import { or } from '../operators/or';
 
 export function isNull(value: unknown): value is null {
     return value === null;

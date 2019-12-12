@@ -1,6 +1,6 @@
-import { Guard } from './types';
+import { Guard } from '../guard';
 import { isUndefined } from './is-undefined';
-import { or } from './operators';
+import { or } from '../operators/or';
 
 type Constructor<T> = new(...args: any[]) => T;
 
@@ -11,5 +11,5 @@ export function isInstanceOf<T>(constructor: Constructor<T>): Guard<T> {
 }
 
 export function isInstanceOfOrUndefined<T>(constructor: Constructor<T>): Guard<T|undefined> {
-    return or(isUndefined, isInstanceOf(constructor));
+    return or(isInstanceOf(constructor), isUndefined);
 }

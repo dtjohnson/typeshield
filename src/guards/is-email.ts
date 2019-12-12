@@ -1,7 +1,7 @@
-import { Guard } from './types';
+import { Guard } from '../guard';
 import { isMatch } from './is-match';
 import { isUndefined } from './is-undefined';
-import { or } from './operators';
+import { or } from '../operators/or';
 
 const isEmailTag = Symbol('isEmail');
 export type Email = string & { [isEmailTag]: void };

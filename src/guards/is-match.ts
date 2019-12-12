@@ -1,7 +1,7 @@
-import { Guard } from './types';
+import { Guard } from '../guard';
 import { isString } from './is-string';
 import { isUndefined } from './is-undefined';
-import { or } from './operators';
+import { or } from '../operators/or';
 
 export function isMatch(regexp: RegExp): Guard<string> {
     const guard = (value: unknown): value is string => isString(value) && regexp.test(value);

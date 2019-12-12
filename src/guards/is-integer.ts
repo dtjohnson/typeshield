@@ -1,7 +1,7 @@
-import { Guard } from './types';
+import { Guard } from '../guard';
 import { isNumber } from './is-number';
 import { isUndefined } from './is-undefined';
-import { or } from './operators';
+import { or } from '../operators/or';
 
 const isIntegerTag = Symbol('isInteger');
 export type Integer = number & { [isIntegerTag]: void };

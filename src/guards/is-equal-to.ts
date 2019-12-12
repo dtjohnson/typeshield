@@ -1,6 +1,6 @@
-import { Guard } from './types';
+import { Guard } from '../guard';
 import { isUndefined } from './is-undefined';
-import { or } from './operators';
+import { or } from '../operators/or';
 
 // Use this trick to infer the type as a literal if possible
 type Narrowable = string | number | boolean | undefined | null | void | {};

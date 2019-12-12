@@ -1,4 +1,4 @@
-import { Guard, Validator, getExpectation } from './types';
+import { Guard, Validator, getExpectation } from './guard';
 
 export class AssertionError extends Error {}
 Object.defineProperty(AssertionError.prototype, 'name', {
