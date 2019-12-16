@@ -7,4 +7,4 @@ export function isString(value: unknown): value is string {
 }
 (isString as Guard).expectation = 'be a string';
 
-export const isStringOrUndefined = or(isUndefined, isString);
+export const isStringOrUndefined = or(isString, isUndefined);

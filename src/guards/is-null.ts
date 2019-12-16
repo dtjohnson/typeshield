@@ -7,4 +7,4 @@ export function isNull(value: unknown): value is null {
 }
 (isNull as Guard).expectation = 'be null';
 
-export const isNullOrUndefined = or(isUndefined, isNull);
+export const isNullOrUndefined = or(isNull, isUndefined);

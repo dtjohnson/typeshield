@@ -5,10 +5,10 @@ import { or } from '../operators/or';
 
 export function isMatch(regexp: RegExp): Guard<string> {
     const guard = (value: unknown): value is string => isString(value) && regexp.test(value);
-    guard.expectation = `to match regex ${regexp}`;
+    guard.expectation = `match regex ${regexp}`;
     return guard;
 }
 
 export function isMatchOrUndefined(regexp: RegExp): Guard<string|undefined> {
-    return or(isUndefined, isMatch(regexp));
+    return or(isMatch(regexp), isUndefined);
 }
