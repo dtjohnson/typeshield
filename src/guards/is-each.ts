@@ -1,15 +1,18 @@
-import { Guard, Validator } from '../guard';
+import { Guard, Validator, getExpectation } from '../guard';
 import { isArray } from './is-array';
 
-export function isEach<T>(guard: Guard<T>): Guard<T[]>;
-export function isEach(guard: Validator): Validator;
-export function isEach<T>(guard: Guard<T>|Validator): Guard<T[]> {
-    return (value: unknown): value is T[] => {
+export function isEach<T>(eachGuard: Guard<T>): Guard<T[]>;
+export function isEach(eachGuard: Validator): Validator;
+export function isEach<T>(eachGuard: Guard<T>|Validator): Guard<T[]> {
+    const guard = (value: unknown): value is T[] => {
         if (!isArray(value)) return false;
         for (const val of value) {
-            if (!guard(val)) return false;
+            if (!eachGuard(val)) return false;
         }
 
         return true;
     };
+    (guard as Guard).expectation = `all ${getExpectation(eachGuard)}`;
+
+    return guard;
 }

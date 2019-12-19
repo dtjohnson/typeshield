@@ -11,6 +11,6 @@ describe(isComparable.name, () => {
     });
 
     it('should throw with a clear message', () => {
-        expect(() => assertValue(isComparable, undefined)).toThrow('Expected value to implement Comparable but received: undefined');
+        expect(() => assertValue(isComparable, undefined)).toThrow('Expected value to implement \'Comparable\' but received: undefined');
     });
 });

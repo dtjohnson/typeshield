@@ -11,6 +11,6 @@ describe(isEquatable.name, () => {
     });
 
     it('should throw with a clear message', () => {
-        expect(() => assertValue(isEquatable, undefined)).toThrow('Expected value to implement Equatable but received: undefined');
+        expect(() => assertValue(isEquatable, undefined)).toThrow('Expected value to implement \'Equatable\' but received: undefined');
     });
 });
