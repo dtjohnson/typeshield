@@ -1,7 +1,7 @@
 import { Guard } from '../guard';
-import { isNullOrUndefined } from './is-null';
+import { isNil } from './is-nil';
 
 export function isDefined<T>(value: T): value is NonNullable<T> {
-    return !isNullOrUndefined(value);
+    return !isNil(value);
 }
 (isDefined as Guard).expectation = 'be defined';

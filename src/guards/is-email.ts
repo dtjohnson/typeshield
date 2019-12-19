@@ -1,10 +1,8 @@
 import { Guard } from '../guard';
 import { isMatch } from './is-match';
-import { isUndefined } from './is-undefined';
-import { or } from '../operators/or';
 
-const isEmailTag = Symbol('isEmail');
-export type Email = string & { [isEmailTag]: void };
+const Email = Symbol('Email');
+export type Email = string & { [Email]: void };
 
 // https://stackoverflow.com/questions/201323/how-to-validate-an-email-address-using-a-regular-expression#201378
 // eslint-disable-next-line no-control-regex, max-len
@@ -14,5 +12,3 @@ export function isEmail(value: unknown): value is Email {
     return isMatch(regex)(value);
 }
 (isEmail as Guard).expectation = 'be an email address';
-
-export const isEmailOrUndefined = or(isEmail, isUndefined);

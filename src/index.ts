@@ -1,7 +1,9 @@
+/* istanbul ignore file */
+
 export * from './assert';
 export * from './guards/is-defined';
 export * from './guards/is-email';
-export * from './guards/is-equal-to';
+export * from './guards/is-identical-to';
 export * from './guards/is-instance-of';
 export * from './guards/is-integer';
 export * from './guards/is-match';
