@@ -1,8 +1,7 @@
 import { Guard } from '../guard';
 import { isMatch } from './is-match';
 
-const Email = Symbol('Email');
-export type Email = string & { [Email]: void };
+export type Email = string & { __Email__: void };
 
 // https://stackoverflow.com/questions/201323/how-to-validate-an-email-address-using-a-regular-expression#201378
 // eslint-disable-next-line no-control-regex, max-len
