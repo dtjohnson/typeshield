@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { isEmptyString } from './is-empty-string';
 import { isString } from './is-string';
 

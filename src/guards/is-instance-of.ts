@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 
 type Constructor<T> = new(...args: any[]) => T;
 

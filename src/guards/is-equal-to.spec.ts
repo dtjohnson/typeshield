@@ -1,5 +1,5 @@
-import { Comparable, Comparison, Equatable } from '../interfaces';
-import { assertValue } from '../assert';
+import { Comparable, Comparison, Equatable } from '../types';
+import { assertValue } from '../assertions/assert-value';
 import { isEqualTo } from './is-equal-to';
 import { isInstanceOf } from './is-instance-of';
 

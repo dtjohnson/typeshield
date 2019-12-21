@@ -1,5 +1,4 @@
-import { Guard } from '../guard';
-import { Narrowable } from '../internal';
+import { Guard, Narrowable } from '../types';
 import { isComparable } from './is-comparable';
 import { isEquatable } from './is-equatable';
 import { isIdenticalTo } from './is-identical-to';

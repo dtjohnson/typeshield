@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isDeepEqualTo } from './is-deep-equal-to';
 
 class Example {

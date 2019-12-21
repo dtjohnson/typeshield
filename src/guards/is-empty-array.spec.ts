@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isEmptyArray } from './is-empty-array';
 
 describe(isEmptyArray.name, () => {

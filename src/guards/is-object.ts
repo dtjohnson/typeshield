@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 
 export function isObject(value: unknown): value is object {
     return typeof value === 'object';

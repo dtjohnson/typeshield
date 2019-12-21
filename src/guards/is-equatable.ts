@@ -1,4 +1,4 @@
-import { Equatable } from '../interfaces';
+import { Equatable } from '../types';
 import { hasDefinition } from './has-definition';
 import { isFunction } from './is-function';
 

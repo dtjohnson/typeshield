@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isNumber } from '../guards/is-number';
 import { isString } from '../guards/is-string';
 import { or } from './or';

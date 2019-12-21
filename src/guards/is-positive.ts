@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { isNumber } from './is-number';
 
 export type Positive = number & { __Positive__: void };

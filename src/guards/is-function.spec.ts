@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isFunction } from './is-function';
 
 /* eslint-disable @typescript-eslint/no-empty-function */

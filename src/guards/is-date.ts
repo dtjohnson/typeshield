@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { isInstanceOf } from './is-instance-of';
 
 export const isDate = isInstanceOf(Date);

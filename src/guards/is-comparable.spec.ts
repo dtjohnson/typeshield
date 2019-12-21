@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isComparable } from './is-comparable';
 
 describe(isComparable.name, () => {

@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isStringContaining } from './is-string-containing';
 
 describe(isStringContaining.name, () => {

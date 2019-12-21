@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { isNil } from './is-nil';
 
 export function isDefined<T>(value: T): value is NonNullable<T> {

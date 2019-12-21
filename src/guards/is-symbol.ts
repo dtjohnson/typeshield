@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 
 export function isSymbol(value: unknown): value is string {
     return typeof value === 'symbol';

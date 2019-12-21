@@ -1,5 +1,5 @@
 import { and } from './and';
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { hasDefinition } from '../guards/has-definition';
 import { isBoolean } from '../guards/is-boolean';
 

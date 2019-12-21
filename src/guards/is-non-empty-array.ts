@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { isArray } from './is-array';
 
 export function isNonEmptyArray(value: unknown): value is unknown[] {

@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isBoolean } from './is-boolean';
 
 describe(isBoolean.name, () => {

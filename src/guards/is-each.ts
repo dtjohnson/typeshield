@@ -1,4 +1,5 @@
-import { Guard, Validator, getExpectation } from '../guard';
+import { Guard, Validator } from '../types';
+import { getExpectation } from '../get-expectation';
 import { isArray } from './is-array';
 
 export function isEach<T>(eachGuard: Guard<T>): Guard<T[]>;

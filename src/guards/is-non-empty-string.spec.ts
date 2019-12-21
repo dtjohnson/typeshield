@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isNonEmptyString } from './is-non-empty-string';
 
 describe(isNonEmptyString.name, () => {

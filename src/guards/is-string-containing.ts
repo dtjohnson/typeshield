@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { isString } from './is-string';
 
 export function isStringContaining(substring: string): Guard<string> {

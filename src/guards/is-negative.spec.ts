@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isNegative } from './is-negative';
 
 describe(isNegative.name, () => {

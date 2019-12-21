@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isIdenticalTo } from './is-identical-to';
 
 describe(isIdenticalTo.name, () => {

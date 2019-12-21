@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 
 export function isFunction(value: unknown): value is Function {
     return typeof value === 'function';

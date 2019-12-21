@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isInstanceOf } from './is-instance-of';
 
 describe(isInstanceOf.name, () => {

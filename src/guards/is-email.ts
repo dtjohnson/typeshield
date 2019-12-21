@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { isMatch } from './is-match';
 
 export type Email = string & { __Email__: void };

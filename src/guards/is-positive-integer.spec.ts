@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isPositiveInteger } from './is-positive-integer';
 
 describe(isPositiveInteger.name, () => {

@@ -1,4 +1,4 @@
-import { Guard, Validator } from '../guard';
+import { Guard, Validator } from '../types';
 import { isFunction } from './is-function';
 import { isObject } from './is-object';
 

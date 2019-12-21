@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { isIdenticalTo } from './is-identical-to';
 
 export const isEmptyString = isIdenticalTo('');

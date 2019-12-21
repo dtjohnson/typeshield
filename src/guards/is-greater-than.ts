@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { isComparable } from './is-comparable';
 
 export function isGreaterThan<T>(other: T): Guard<T> {

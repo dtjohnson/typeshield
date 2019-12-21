@@ -1,5 +1,4 @@
-import { Guard } from '../guard';
-import { Narrowable } from '../internal';
+import { Guard, Narrowable } from '../types';
 import deepEqual from 'deep-equal';
 
 export function isDeepEqualTo<T extends Narrowable>(other: T, strict: boolean = true): Guard<T> {

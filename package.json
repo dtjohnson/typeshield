@@ -43,7 +43,7 @@
     "compile:esm": "tsc -p tsconfig.esm.json",
     "clean": "rm -rf ./dist",
     "docs": "typedoc --tsconfig tsconfig.build.json --out docs src/index.ts",
-    "http": "http-server -c-1 -o",
+    "serve-docs": "http-server -c-1 -o docs/",
     "test": "jest --no-cache",
     "lint": "eslint --fix \"src/**/*.ts\"",
     "prepublishOnly": "npm run build"

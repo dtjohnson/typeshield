@@ -1,4 +1,4 @@
-import { Guard } from '../guard';
+import { Guard } from '../types';
 import { Integer, isInteger } from './is-integer';
 import { Negative, isNegative } from './is-negative';
 import { and } from '../operators/and';

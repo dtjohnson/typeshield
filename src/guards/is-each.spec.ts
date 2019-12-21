@@ -1,4 +1,4 @@
-import { assertValue } from '../assert';
+import { assertValue } from '../assertions/assert-value';
 import { isEach } from './is-each';
 import { isNumber } from './is-number';
 
