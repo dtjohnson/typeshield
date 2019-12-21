@@ -1,4 +1,10 @@
 import { assert } from './assert';
-export function assertUnreachable(msg?: string): never {
-    assert(false, msg ?? 'Statement should not be reachable');
+
+/**
+ * Asserts that the given call is never reached. Will always throw if called.
+ * Useful for ending branches that TypeScript can't properly determine
+ * @param msg The message to throw
+ */
+export function assertUnreachable(msg: string = 'Statement should not be reachable'): never {
+    assert(false, msg);
 }

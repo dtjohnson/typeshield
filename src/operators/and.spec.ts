@@ -1,10 +1,10 @@
 import { and } from './and';
 import { assertValue } from '../assertions/assert-value';
-import { hasDefinition } from '../guards/has-definition';
+import { hasProperties } from '../guards/has-properties';
 import { isBoolean } from '../guards/is-boolean';
 
-const isFoo = hasDefinition({ foo: isBoolean }, 'Foo');
-const isBar = hasDefinition({ bar: isBoolean }, 'Bar');
+const isFoo = hasProperties({ foo: isBoolean }, 'Foo');
+const isBar = hasProperties({ bar: isBoolean }, 'Bar');
 
 describe(and.name, () => {
     it('should create a combination guard', () => {

@@ -1,4 +1,4 @@
-import { Comparable, Comparison } from '../types';
+import { Comparable, ComparisonResult } from '../types';
 import { assertValue } from '../assertions/assert-value';
 import { isInstanceOf } from './is-instance-of';
 import { isLessThan } from './is-less-than';
@@ -10,7 +10,7 @@ class Example {
 class ExampleComparable implements Comparable {
     public constructor(public value: number) {}
 
-    public compareTo(other: unknown): Comparison {
+    public compareTo(other: unknown): ComparisonResult {
         if (!isInstanceOf(ExampleComparable)(other)) return;
         if (this.value < other.value) return -1;
         if (this.value > other.value) return 1;

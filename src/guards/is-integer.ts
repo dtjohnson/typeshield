@@ -1,11 +1,23 @@
 import { Guard } from '../types';
 import { isNumber } from './is-number';
 
+/**
+ * Brand interface for [[Integer]]
+ */
 interface IntegerBrand {
     __Integer__: void;
 }
+
+/**
+ * A number that is an integer
+ */
 export type Integer = number & IntegerBrand;
 
+/**
+ * Guard that tests if the value is an integer
+ * @param value The value to test
+ * @returns The result of the test
+ */
 export function isInteger(value: unknown): value is Integer {
     return isNumber(value) && Number.isInteger(value);
 }

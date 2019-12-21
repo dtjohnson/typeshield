@@ -5,7 +5,7 @@ describe(isObject.name, () => {
     it('should return true if match', () => {
         expect(isObject({})).toBe(true);
         expect(isObject(new Date())).toBe(true);
-        expect(isObject(null)).toBe(true);
+        expect(isObject(null)).toBe(false);
         expect(isObject(undefined)).toBe(false);
         expect(isObject('some string')).toBe(false);
     });

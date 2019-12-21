@@ -8,7 +8,7 @@ export * from './assertions/assert';
 export * from './assertions/assertion-error';
 
 // guards
-export * from './guards/has-definition';
+export * from './guards/has-properties';
 export * from './guards/is-array';
 export * from './guards/is-big-int';
 export * from './guards/is-boolean';
