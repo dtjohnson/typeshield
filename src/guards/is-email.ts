@@ -1,7 +1,10 @@
 import { Guard } from '../types';
 import { isMatch } from './is-match';
 
-export type Email = string & { __Email__: void };
+interface EmailBrand {
+    __Email__: void;
+}
+export type Email = string & EmailBrand;
 
 // https://stackoverflow.com/questions/201323/how-to-validate-an-email-address-using-a-regular-expression#201378
 // eslint-disable-next-line no-control-regex, max-len

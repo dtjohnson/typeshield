@@ -1,7 +1,10 @@
 import { Guard } from '../types';
 import { isNumber } from './is-number';
 
-export type Positive = number & { __Positive__: void };
+interface PositiveBrand {
+    __Positive__: void;
+}
+export type Positive = number & PositiveBrand;
 
 export function isPositive(value: unknown): value is Positive {
     return isNumber(value) && value > 0;
