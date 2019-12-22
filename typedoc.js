@@ -1,7 +1,7 @@
 module.exports = {
-    mode: "file",
+    name: 'Guardian Documentation',
+    mode: 'file',
     excludePrivate: true,
     excludeProtected: true,
-    excludeNodeExported: true,
     ignoreCompilerErrors: true,
 };

@@ -55,3 +55,15 @@ export type ComparisonResult = -1|0|1|undefined;
  * Union of types that TypeScript can narrow to literal types
  */
 export type Narrowable = string | number | boolean | undefined | null | void | {};
+
+/**
+ * A type tag.
+ */
+type Tag<T extends string> = {
+    [K in T]: void;
+};
+
+/**
+ * A tagged type.
+ */
+export type Tagged<TValue, TTag extends string> = TValue & Tag<TTag>;

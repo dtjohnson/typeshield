@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "module": "commonjs",
         "target": "es6",                  // Target ES6, which covers most browsers and Node.js
         "lib": ["esnext"],                // Explicitly set the lib so we exclude DOM, which isn't fully supported in Node.js. We need esnext for bigint support
         "types": ["jest"],                // Remove any globals. Just add Jest for testing
@@ -10,6 +11,7 @@
         "outDir": "dist",                 // Output to the dist directory
         "esModuleInterop": true,          // Allow import of CommonJS modules
         "experimentalDecorators": true,   // Enable decorators so we can test the Assert decorator
+        "baseUrl": "src",
     }
   }
   

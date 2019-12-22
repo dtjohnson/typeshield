@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>guardian</title>
+	<title>Guardian Documentation</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">guardian</a>
+					<a href="index.html" class="title">Guardian Documentation</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -56,7 +56,7 @@
 					<a href="globals.html">Globals</a>
 				</li>
 			</ul>
-			<h1> guardian</h1>
+			<h1> Guardian Documentation</h1>
 		</div>
 	</div>
 </header>
@@ -64,7 +64,508 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<p>TODO:</p>
+				<a href="#guardian" id="guardian" style="color: inherit; text-decoration: none;">
+					<h1>Guardian</h1>
+				</a>
+				<p>Guardian is a collection of composable TypeScript/JavaScript type guards and assertions. Assertions use the new <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions">assertion function</a> types in TypeScript 3.7.</p>
+				<a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
+					<h2>Table of Contents</h2>
+				</a>
+				<!-- toc -->
+				<ul>
+					<li><a href="#guards">Guards</a><ul>
+							<li><a href="#prebuilt-guards">Prebuilt Guards</a></li>
+							<li><a href="#arrays">Arrays</a></li>
+							<li><a href="#object-properties">Object Properties</a></li>
+							<li><a href="#composing-guards">Composing Guards</a></li>
+						</ul>
+					</li>
+					<li><a href="#assertions">Assertions</a><ul>
+							<li><a href="#value-assertions">Value Assertions</a></li>
+							<li><a href="#assert-property-decorator">Assert Property Decorator</a></li>
+							<li><a href="#assert-unreachable">Assert Unreachable</a></li>
+						</ul>
+					</li>
+					<li><a href="#guard-reference">Guard Reference</a></li>
+				</ul>
+				<!-- tocstop -->
+				<a href="#guards" id="guards" style="color: inherit; text-decoration: none;">
+					<h2>Guards</h2>
+				</a>
+				<p>A <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types">type guard</a> in TypeScript is a function that checks the type of a value. This is a function of the form:</p>
+				<pre><code class="language-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">value: unknown</span>): <span class="hljs-title">value</span> <span class="hljs-title">is</span> <span class="hljs-title">Foo</span> </span>{
+    <span class="hljs-comment">// Perform logic to determine if the value is indeed a 'Foo' and return true if it is, false otherwise.</span>
+}</code></pre>
+				<p>Guardian exposes the <a href="globals.html#guard">Guard</a> type to capture this. It also exposes a more general <a href="globals.html#validator">Validator</a> type, which is just a function that takes an unknown value and returns a boolean.</p>
+				<a href="#prebuilt-guards" id="prebuilt-guards" style="color: inherit; text-decoration: none;">
+					<h3>Prebuilt Guards</h3>
+				</a>
+				<p>Guardian includes a large number of prebuilt guards. A full list can be found in the <a href="#guard-reference">Guard Reference</a>. An example:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isDate } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-keyword">if</span> (isDate(value)) {
+        <span class="hljs-comment">// Inside this block value has type 'Date'</span>
+        <span class="hljs-comment">// ...</span>
+    }
+}</code></pre>
+				<p>Some Guardian functions are factories that require specifying an additional value in order to generate a guard. For example:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isStringContaining } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-keyword">if</span> (isStringContaining(<span class="hljs-string">'foo'</span>)(value)) {
+        <span class="hljs-comment">// Inside this block value has type 'string'</span>
+        <span class="hljs-comment">// We also know it contains the substring 'foo' but that isn't known in the type system.</span>
+        <span class="hljs-comment">// ...</span>
+    }
+}
+
+<span class="hljs-comment">// You can also save the guard to call for later</span>
+<span class="hljs-keyword">const</span> isStringContainingFoo = isStringContaining(<span class="hljs-string">'foo'</span>);
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomethingElse</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-keyword">if</span> (isStringContainingFoo(value)) {
+        <span class="hljs-comment">// ...</span>
+    }
+}</code></pre>
+				<p>Some guards return tagged primitive types. These are primitive types that are combined with a special tag type that can restrict usage. For example, the <a href="globals.html#isinteger">isInteger</a> guard will type a variable as an <a href="globals.html#integer">Integer</a>, which is just a number with an additional tag indicating that we know it is an integer.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isInteger, Integer } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomethingWithNumber</span>(<span class="hljs-params">value: <span class="hljs-built_in">number</span></span>) </span>{
+    <span class="hljs-comment">// ...</span>
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomethingWithInteger</span>(<span class="hljs-params">value: Integer</span>) </span>{
+    <span class="hljs-comment">// ...</span>
+}
+
+<span class="hljs-keyword">const</span> foo: <span class="hljs-built_in">number</span> = <span class="hljs-number">5</span>; <span class="hljs-comment">// Type is 'number'</span>
+doSomethingWithNumber(foo); <span class="hljs-comment">// OK</span>
+doSomethingWithInteger(foo); <span class="hljs-comment">// Error! Argument of type 'number' is not assignable to parameter of type 'Integer'.</span>
+
+<span class="hljs-keyword">if</span> (isInteger(foo)) { <span class="hljs-comment">// Type is 'Integer'</span>
+    doSomethingWithNumber(foo); <span class="hljs-comment">// Still OK as 'Integer' is also a 'number'</span>
+    doSomethingWithInteger(foo); <span class="hljs-comment">// OK</span>
+}</code></pre>
+				<a href="#arrays" id="arrays" style="color: inherit; text-decoration: none;">
+					<h3>Arrays</h3>
+				</a>
+				<p>Items in arrays can also be checked using the <a href="globals.html#iseach">isEach</a> guard factory. The guard will first check that the value is an array and will then check each item in the array against the specified guard.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isEach, isNumber } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-keyword">const</span> isArrayOfNumbers = isEach(isNumber);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-keyword">if</span> (isArrayOfNumbers(value)) {
+        <span class="hljs-comment">// Inside this block value has type 'number[]'</span>
+        <span class="hljs-comment">// ...</span>
+    }
+}</code></pre>
+				<a href="#object-properties" id="object-properties" style="color: inherit; text-decoration: none;">
+					<h3>Object Properties</h3>
+				</a>
+				<p>Similarly, you can check the properties of an object using the <a href="globals.html#hasproperties">hasProperties</a> guard factory:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasDefinition, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-keyword">const</span> hasFooStringProperty = hasDefinition({
+    foo: isString,
+});
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-keyword">if</span> (hasFooStringProperty(value)) {
+        <span class="hljs-comment">// This checks if the value has the property 'foo' and that is a string, but it's still typed as 'unknown'. :(</span>
+        <span class="hljs-comment">// ...</span>
+    }
+}</code></pre>
+				<p>In the previous example, the guard just asks as a validator. It doesn&#39;t inform the type system. However, the factory takes an optional generic argument that will set the type and check the keys of your validator object. The factory also takes an optional interface name parameter (used for assertions below). This makes it extremely easy to build strongly typed guards for your interfaces:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasDefinition, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-keyword">interface</span> Foo {
+    foo: <span class="hljs-built_in">string</span>;
+    bar: <span class="hljs-built_in">number</span>[];
+}
+
+<span class="hljs-keyword">const</span> isFoo = hasDefinition&lt;Foo&gt;({
+    foo: isString,
+    bar: isEach(isNumber),
+}, <span class="hljs-string">'Foo'</span>);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-keyword">if</span> (isFoo(value)) {
+        <span class="hljs-comment">// Inside this block, value has type 'Foo' :)</span>
+        <span class="hljs-comment">// ...</span>
+    }
+}</code></pre>
+				<p>You can, of course, nest the guards however deep you&#39;d like.</p>
+				<a href="#composing-guards" id="composing-guards" style="color: inherit; text-decoration: none;">
+					<h3>Composing Guards</h3>
+				</a>
+				<p>Guardian comes with two operators (<a href="globals.html#or">or</a> and <a href="globals.html#and">and</a>) for easily combining guards together to create new guards. (In fact, many of the guards included in Guardian are created this way.) The <a href="globals.html#or">or</a> operator can be used to check if a value matches on of 2 or more guards.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isNumber, isString, isUndefined } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-keyword">if</span> (or(isNumber, isString)(value)) {
+        <span class="hljs-comment">// Inside this block value has type 'number|string'</span>
+        <span class="hljs-comment">// ...</span>
+    }
+}
+
+<span class="hljs-comment">// You can also save the guard to call for later</span>
+<span class="hljs-keyword">const</span> isStringOrUndefined = or(isString, isUndefined);
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomethingElse</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-keyword">if</span> (isStringOrUndefined(value)) {
+        <span class="hljs-comment">// Inside this block value has type 'string|undefined'</span>
+        <span class="hljs-comment">// ...</span>
+    }
+}</code></pre>
+				<p>Simlarly, the <a href="globals.html#and">and</a> operator creates an intersection of types.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasProperties, isBoolean, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-keyword">interface</span> Foo {
+    foo: <span class="hljs-built_in">boolean</span>;
+}
+<span class="hljs-keyword">const</span> isFoo = hasProperties&lt;Foo&gt;({
+    foo: isBoolean,
+}, <span class="hljs-string">'Foo'</span>);
+
+<span class="hljs-keyword">interface</span> Bar {
+    bar: <span class="hljs-built_in">number</span>;
+}
+<span class="hljs-keyword">const</span> isBar = hasProperties&lt;Bar&gt;({
+    bar: isNumber,
+}, <span class="hljs-string">'Bar'</span>);
+
+<span class="hljs-keyword">const</span> isFooAndBar = and(isFoo, isBar);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-keyword">if</span> (isFooAndBar(value)) {
+        <span class="hljs-comment">// Inside this block value has type 'Foo &amp; Bar' so you can access 'value.foo' and 'value.bar'</span>
+    }
+}</code></pre>
+				<a href="#assertions" id="assertions" style="color: inherit; text-decoration: none;">
+					<h2>Assertions</h2>
+				</a>
+				<p>TypeScript introduced type support for <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions">assertion functions</a> in release 3.7. Guardian includes the <a href="globals.html#assert">assert</a> function to handle arbitrary assertion conditions. If the condition is met, execution continues, if not an <a href="classes/assertionerror.html">AssertionError</a> is thrown. Starting with TypeScript 3.7, the type engine also knows how to restrict the types after these assertions.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { assert } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
+    <span class="hljs-comment">// The condition argument here is whatever you want.</span>
+    assert(<span class="hljs-keyword">typeof</span> value === <span class="hljs-string">'string'</span>);
+
+    <span class="hljs-comment">// Now the type of value is 'string'</span>
+    <span class="hljs-comment">// If the value was not a string an error would be thrown.</span>
+}</code></pre>
+				<p>You can also specify a custom error message if you want to control the error message.</p>
+				<a href="#value-assertions" id="value-assertions" style="color: inherit; text-decoration: none;">
+					<h3>Value Assertions</h3>
+				</a>
+				<p>Guardian also includes an <a href="globals.html#assertvalue">assertValue</a> function if you want to make assertions about the value of a variable. This form of the assertion makes it each to throw meaningful error messages. The first value of the function is any <a href="globals.html#guard">Guard</a> or <a href="globals.html#validator">Validator</a>, the second is the value to test, and the 3rd is an optional name for the variable.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { assertValue, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-keyword">const</span> myVar: <span class="hljs-built_in">number</span> = <span class="hljs-number">5</span>;
+assertValue(isString, myVar, <span class="hljs-string">'myVar'</span>); <span class="hljs-comment">// throws AssertionError: Expected 'myVar' to be a string but received: 5</span></code></pre>
+				<p>This works for your custom guards as well:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { assertValue } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isFoo</span>(<span class="hljs-params">value; unknown</span>): <span class="hljs-title">value</span> <span class="hljs-title">is</span> <span class="hljs-title">Foo</span> </span>{
+    <span class="hljs-comment">// Implement here</span>
+} 
+
+<span class="hljs-keyword">const</span> myVar: <span class="hljs-built_in">number</span> = <span class="hljs-number">5</span>;
+assertValue(isFoo, myVar); <span class="hljs-comment">// throws AssertionError: Expected value to match 'isFoo' but received: 5</span></code></pre>
+				<p>In this example the error message isn&#39;t very friendly. You can make the message more friendly by using the optional 4th parameter. This parameter is an expectation message and it is a sentence fragment that follows <code>&#39;expected variable to &#39;</code>:</p>
+				<pre><code class="language-ts">assertValue(isFoo, myVar, <span class="hljs-string">'myVar'</span>, <span class="hljs-string">'be a Foo'</span>); <span class="hljs-comment">// throws AssertionError: Expected 'myVar' to be a Foo but received: 5</span></code></pre>
+				<p>The downside of this approach is that you need to specify the expectation each time you make a value assertion. There is a better alternative approach. The <a href="globals.html#guard">Guard</a> and <a href="globals.html#validator">Validator</a> type includes an additional optional <code>expectation</code> property that allows you to attach the expectation directly to the function. To use it:</p>
+				<pre><code class="language-ts">(isFoo <span class="hljs-keyword">as</span> Guard).expectation = <span class="hljs-string">'be a Foo'</span>;
+
+<span class="hljs-comment">// From now on:</span>
+assertValue(isFoo, myVar); <span class="hljs-comment">// throws AssertionError: Expected value to be a Foo but received: 5</span></code></pre>
+				<p>Most of the prebuild guards in Guardian use this property to set more helpful messages, which is why the example with <a href="globals.html#isstring">isString</a> above looked good.</p>
+				<a href="#assert-property-decorator" id="assert-property-decorator" style="color: inherit; text-decoration: none;">
+					<h3>Assert Property Decorator</h3>
+				</a>
+				<p>Guardian also includes an <a href="globals.html#assert">Assert</a> decorator that can be used on class properties. This decorator converts a property to a getter/setter with a setter that calls <a href="globals.html#assertvalue">assertValue</a>. For example:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">class</span> MyClass {
+    <span class="hljs-meta">@Assert</span>(or(isEmail, isUndefined))
+    <span class="hljs-keyword">public</span> email?: <span class="hljs-built_in">string</span>;
+}
+
+<span class="hljs-keyword">const</span> instance = <span class="hljs-keyword">new</span> MyClass();
+instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comment">// throws AssertionError: Expected 'MyClass#email' to be an email address or to be undefined but received: foo</span></code></pre>
+				<p>The decorator has the same signature as <a href="globals.html#assertvalue">assertValue</a> so the name and expectation can be overridden. The decorator also supports static properties.</p>
+				<a href="#assert-unreachable" id="assert-unreachable" style="color: inherit; text-decoration: none;">
+					<h3>Assert Unreachable</h3>
+				</a>
+				<p>Finally, Guardian includes an <a href="globals.html#assertunreachable">assertUnreachable</a> function that will always throw if called. This is useful for protecting code when called from JavaScript (i.e. no type checking) or for ensuring fully discriminated unions to be safe from refactoring.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">interface</span> A {
+    <span class="hljs-keyword">type</span>: <span class="hljs-string">'a'</span>;
+}
+
+<span class="hljs-keyword">interface</span> B {
+    <span class="hljs-keyword">type</span>: <span class="hljs-string">'b'</span>;
+}
+
+<span class="hljs-keyword">type</span> All = A | B;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">arg: All</span>): <span class="hljs-title">string</span> </span>{
+    <span class="hljs-keyword">if</span> (arg.type === <span class="hljs-string">'a'</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'A'</span>;
+    }
+
+    <span class="hljs-keyword">if</span> (arg.type === <span class="hljs-string">'b'</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-string">'B'</span>;
+    }
+
+    <span class="hljs-comment">// This could be reached if called from JS or if another type is added to 'All'</span>
+    assertUnreachable(); <span class="hljs-comment">// throws AssertionError: Statement should not be reachable</span>
+}</code></pre>
+				<a href="#guard-reference" id="guard-reference" style="color: inherit; text-decoration: none;">
+					<h2>Guard Reference</h2>
+				</a>
+				<!-- guardref -->
+				<table>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Factory Params</th>
+							<th>Return Type</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><a href="globals.html#hasproperties">hasProperties</a></td>
+							<td><strong>validators</strong>: PropertyValidators<T> - The property validators<br /><strong>interfaceName</strong>: string - An optional interface name to report in the error message</td>
+							<td>T</td>
+							<td>Creates a guard that tests if a value is an object with properties matching the specified property validators</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isarray">isArray</a></td>
+							<td></td>
+							<td>unknown[]</td>
+							<td>Guard that tests if the value is an array</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isbigint">isBigInt</a></td>
+							<td></td>
+							<td>bigint</td>
+							<td>Guard that tests if the value is an big integer</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isboolean">isBoolean</a></td>
+							<td></td>
+							<td>boolean</td>
+							<td>Guard that tests if the value is a boolean</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#iscomparable">isComparable</a></td>
+							<td></td>
+							<td><a href="interfaces/comparable.html">Comparable</a></td>
+							<td>Guard that tests if the value implements the <a href="interfaces/comparable.html">Comparable</a> interface</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isdate">isDate</a></td>
+							<td></td>
+							<td>Date</td>
+							<td>Guard that tests if the value is an instance of Date</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isdeepequalto">isDeepEqualTo</a></td>
+							<td><strong>other</strong>: T - The object to compare values to<br /><strong>strict</strong>: boolean - True to use strict equality (default) and false to use coercive equality</td>
+							<td>T</td>
+							<td>Creates a guard that tests if a value is equal to the specified value using the <a href="https://www.npmjs.com/package/deep-equal" class="external">deep-equal package</a></td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isdefined">isDefined</a></td>
+							<td></td>
+							<td>NonNullable<T></td>
+							<td>Guard that tests if the value is not null and not undefined</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#iseach">isEach</a></td>
+							<td><strong>eachGuard</strong>: Guard<T> - The guard used for each item in the array.</td>
+							<td>T[]</td>
+							<td>Creates a guard that tests if a value is an array and that each value in the array satisfies the given guard.</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isemail">isEmail</a></td>
+							<td></td>
+							<td><a href="globals.html#email">Email</a></td>
+							<td>Guard that tests if the value is an email address</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isemptyarray">isEmptyArray</a></td>
+							<td></td>
+							<td>unknown[]</td>
+							<td>Guard that tests if the value is an empty array</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isemptystring">isEmptyString</a></td>
+							<td></td>
+							<td>&quot;&quot;</td>
+							<td>Guard that tests if the value is an empty string</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isequalto">isEqualTo</a></td>
+							<td><strong>other</strong>: T - The object to compare values to</td>
+							<td>T</td>
+							<td>Creates a guard that tests if a value is equal to a specified object. Values are compared by identity first andthen by using the <a href="interfaces/equatable.html">Equatable</a> or <a href="interfaces/comparable.html">Comparable</a> interfaces, if implemented.</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isequatable">isEquatable</a></td>
+							<td></td>
+							<td><a href="interfaces/equatable.html">Equatable</a></td>
+							<td>Guard that tests if the value implements the <a href="interfaces/equatable.html">Equatable</a> interface</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isfunction">isFunction</a></td>
+							<td></td>
+							<td>function</td>
+							<td>Guard that tests if the value is a function</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isgreaterthan">isGreaterThan</a></td>
+							<td><strong>other</strong>: T - The value to compare to</td>
+							<td>T</td>
+							<td>Creates a guard that tests if a value if greater than a specified value. Will firstcompare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isgreaterthanorequalto">isGreaterThanOrEqualTo</a></td>
+							<td><strong>other</strong>: T - The value to compare to</td>
+							<td>T</td>
+							<td>Creates a guard that tests if a value if greater than or equal to a specified value. Will firstcompare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.Note that objects not implementing <a href="interfaces/comparable.html">Comparable</a> or custom value representations may return unexpectedresults as JS will revert to comparing string representations.</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isidenticalto">isIdenticalTo</a></td>
+							<td><strong>other</strong>: T - The other value to compare to</td>
+							<td>T</td>
+							<td>Creates a guard that tests if a value is identical to another value. This uses the JSstrict equality comparison operator (===) so primitives are compared by value but objectsare compared by reference.</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isinstanceof">isInstanceOf</a></td>
+							<td><strong>constructor</strong>: Constructor<T> - The constructor</td>
+							<td>T</td>
+							<td>Creates a guard that tests if a value is an instance of the specified constructor</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isinteger">isInteger</a></td>
+							<td></td>
+							<td><a href="globals.html#integer">Integer</a></td>
+							<td>Guard that tests if the value is an integer</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#islessthan">isLessThan</a></td>
+							<td><strong>other</strong>: T - The value to compare to</td>
+							<td>T</td>
+							<td>Creates a guard that tests if a value if less than a specified value. Will firstcompare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#islessthanorequalto">isLessThanOrEqualTo</a></td>
+							<td><strong>other</strong>: T - The value to compare to</td>
+							<td>T</td>
+							<td>Creates a guard that tests if a value if less than or equal to a specified value. Will firstcompare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.Note that objects not implementing <a href="interfaces/comparable.html">Comparable</a> or custom value representations may return unexpectedresults as JS will revert to comparing string representations.</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#ismatch">isMatch</a></td>
+							<td><strong>regexp</strong>: RegExp - The regular expression</td>
+							<td>string</td>
+							<td>Creates a guard that tests if a value is a string that matches the specified RegExp</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isnegative">isNegative</a></td>
+							<td></td>
+							<td><a href="globals.html#negative">Negative</a></td>
+							<td>Guard that tests if the value is a negative number</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isnegativeinteger">isNegativeInteger</a></td>
+							<td></td>
+							<td><a href="globals.html#negativeinteger">NegativeInteger</a></td>
+							<td>Guard that tests if the value is a negative integer</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isnil">isNil</a></td>
+							<td></td>
+							<td>unknown</td>
+							<td>Guard that tests if the value is null or undefined</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isnonemptyarray">isNonEmptyArray</a></td>
+							<td></td>
+							<td>unknown[]</td>
+							<td>Guard that tests if the value is an array that is not empty</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isnonemptystring">isNonEmptyString</a></td>
+							<td></td>
+							<td>string</td>
+							<td>Guard that tests if the value is a string that is not empty</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isnull">isNull</a></td>
+							<td></td>
+							<td>null</td>
+							<td>Guard that tests if the value is null</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isnumber">isNumber</a></td>
+							<td></td>
+							<td>number</td>
+							<td>Guard that tests if the value is a number</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isobject">isObject</a></td>
+							<td></td>
+							<td>object</td>
+							<td>Guard that tests if the value is any object (and not null)</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#ispositive">isPositive</a></td>
+							<td></td>
+							<td><a href="globals.html#positive">Positive</a></td>
+							<td>Guard that tests if the value is a positive number</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#ispositiveinteger">isPositiveInteger</a></td>
+							<td></td>
+							<td><a href="globals.html#positiveinteger">PositiveInteger</a></td>
+							<td>Guard that tests if the value is a positive integer</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isstring">isString</a></td>
+							<td></td>
+							<td>string</td>
+							<td>Guard that tests if the value is a string</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isstringcontaining">isStringContaining</a></td>
+							<td><strong>substring</strong>: string - The substring to check for</td>
+							<td>string</td>
+							<td>Creates a guard that tests if a value is a string containing the specified substring</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isstringnotcontaining">isStringNotContaining</a></td>
+							<td><strong>substring</strong>: string - The substring to check for</td>
+							<td>string</td>
+							<td>Creates a guard that tests if a value is a string that does not contain the specified substring</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#issymbol">isSymbol</a></td>
+							<td></td>
+							<td>symbol</td>
+							<td>Guard that tests if the value is a symbol</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isundefined">isUndefined</a></td>
+							<td></td>
+							<td>undefined</td>
+							<td>Guard that tests if the value is undefined</td>
+						</tr>
+						<tr>
+							<td><!-- guardrefstop --></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+				</tbody></table>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -83,23 +584,11 @@
 					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="interfaces/comparable.html" class="tsd-kind-icon">Comparable</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-is-external tsd-is-not-exported">
-						<a href="interfaces/emailbrand.html" class="tsd-kind-icon">Email<wbr>Brand</a>
-					</li>
 					<li class=" tsd-kind-interface tsd-is-external">
 						<a href="interfaces/equatable.html" class="tsd-kind-icon">Equatable</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-is-external tsd-is-not-exported">
 						<a href="interfaces/hasexpectation.html" class="tsd-kind-icon">Has<wbr>Expectation</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-is-external tsd-is-not-exported">
-						<a href="interfaces/integerbrand.html" class="tsd-kind-icon">Integer<wbr>Brand</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-is-external tsd-is-not-exported">
-						<a href="interfaces/negativebrand.html" class="tsd-kind-icon">Negative<wbr>Brand</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-is-external tsd-is-not-exported">
-						<a href="interfaces/positivebrand.html" class="tsd-kind-icon">Positive<wbr>Brand</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-is-external">
 						<a href="globals.html#comparisonresult" class="tsd-kind-icon">Comparison<wbr>Result</a>
@@ -140,29 +629,14 @@
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external">
 						<a href="globals.html#propertyvalidators" class="tsd-kind-icon">Property<wbr>Validators</a>
 					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external tsd-is-not-exported">
+						<a href="globals.html#tag" class="tsd-kind-icon">Tag</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external">
+						<a href="globals.html#tagged" class="tsd-kind-icon">Tagged</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-is-external">
 						<a href="globals.html#validator" class="tsd-kind-icon">Validator</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#iscomparable" class="tsd-kind-icon">is<wbr>Comparable</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#isdate" class="tsd-kind-icon">is<wbr>Date</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#isemptystring" class="tsd-kind-icon">is<wbr>Empty<wbr>String</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#isequatable" class="tsd-kind-icon">is<wbr>Equatable</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#isnegativeinteger" class="tsd-kind-icon">is<wbr>Negative<wbr>Integer</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#isnil" class="tsd-kind-icon">is<wbr>Nil</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-is-external">
-						<a href="globals.html#ispositiveinteger" class="tsd-kind-icon">is<wbr>Positive<wbr>Integer</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#assert" class="tsd-kind-icon">Assert</a>
@@ -191,6 +665,12 @@
 					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#isboolean" class="tsd-kind-icon">is<wbr>Boolean</a>
 					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="globals.html#iscomparable" class="tsd-kind-icon">is<wbr>Comparable</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="globals.html#isdate" class="tsd-kind-icon">is<wbr>Date</a>
+					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-external">
 						<a href="globals.html#isdeepequalto" class="tsd-kind-icon">is<wbr>Deep<wbr>Equal<wbr>To</a>
 					</li>
@@ -206,8 +686,14 @@
 					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#isemptyarray" class="tsd-kind-icon">is<wbr>Empty<wbr>Array</a>
 					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="globals.html#isemptystring" class="tsd-kind-icon">is<wbr>Empty<wbr>String</a>
+					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-external">
 						<a href="globals.html#isequalto" class="tsd-kind-icon">is<wbr>Equal<wbr>To</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="globals.html#isequatable" class="tsd-kind-icon">is<wbr>Equatable</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#isfunction" class="tsd-kind-icon">is<wbr>Function</a>
@@ -240,6 +726,12 @@
 						<a href="globals.html#isnegative" class="tsd-kind-icon">is<wbr>Negative</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
+						<a href="globals.html#isnegativeinteger" class="tsd-kind-icon">is<wbr>Negative<wbr>Integer</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="globals.html#isnil" class="tsd-kind-icon">is<wbr>Nil</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#isnonemptyarray" class="tsd-kind-icon">is<wbr>Non<wbr>Empty<wbr>Array</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
@@ -256,6 +748,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#ispositive" class="tsd-kind-icon">is<wbr>Positive</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="globals.html#ispositiveinteger" class="tsd-kind-icon">is<wbr>Positive<wbr>Integer</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#isstring" class="tsd-kind-icon">is<wbr>String</a>

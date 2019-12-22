@@ -8,10 +8,14 @@ import { and } from '../operators/and';
  */
 export type PositiveInteger = Positive & Integer;
 
+const guard = and(isPositive, isInteger);
+
 /**
  * Guard that tests if the value is a positive integer
  * @param value The value to test
  * @returns The result of the test
  */
-export const isPositiveInteger: Guard<PositiveInteger> = and(isPositive, isInteger);
+export function isPositiveInteger(value: unknown): value is PositiveInteger {
+    return guard(value);
+}
 (isPositiveInteger as Guard).expectation = 'be a positive integer';

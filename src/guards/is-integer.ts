@@ -1,17 +1,10 @@
-import { Guard } from '../types';
+import { Guard, Tagged } from '../types';
 import { isNumber } from './is-number';
-
-/**
- * Brand interface for [[Integer]]
- */
-interface IntegerBrand {
-    __Integer__: void;
-}
 
 /**
  * A number that is an integer
  */
-export type Integer = number & IntegerBrand;
+export type Integer = Tagged<number, '__Integer__'>;
 
 /**
  * Guard that tests if the value is an integer

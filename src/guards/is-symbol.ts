@@ -5,7 +5,7 @@ import { Guard } from '../types';
  * @param value The value to test
  * @returns The result of the test
  */
-export function isSymbol(value: unknown): value is string {
+export function isSymbol(value: unknown): value is symbol {
     return typeof value === 'symbol';
 }
 (isSymbol as Guard).expectation = 'be a symbol';

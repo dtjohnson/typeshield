@@ -1,17 +1,10 @@
-import { Guard } from '../types';
+import { Guard, Tagged } from '../types';
 import { isMatch } from './is-match';
-
-/**
- * Brand interface for [[Email]]
- */
-interface EmailBrand {
-    __Email__: void;
-}
 
 /**
  * A string that is an email address
  */
-export type Email = string & EmailBrand;
+export type Email = Tagged<string, '__Email__'>;
 
 /**
  * Regex for validating an email address. Found here:
