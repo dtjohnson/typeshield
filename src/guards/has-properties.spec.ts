@@ -13,6 +13,5 @@ describe(hasProperties.name, () => {
 
     it('should throw with a clear message', () => {
         expect(() => assertValue(hasProperties({}), undefined)).toThrow('Expected value to have specified properties but received: undefined');
-        expect(() => assertValue(hasProperties({}, 'Foo'), undefined)).toThrow('Expected value to implement \'Foo\' but received: undefined');
     });
 });

@@ -221,38 +221,39 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
 					<h3>Object Properties</h3>
 				</a>
 				<p>Similarly, you can check the properties of an object using the <a href="globals.html#hasproperties">hasProperties</a> guard factory:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasDefinition, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasProperties, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
 
-<span class="hljs-keyword">const</span> hasFooStringProperty = hasDefinition({
+<span class="hljs-keyword">const</span> hasFooStringProperty = hasProperties({
     foo: isString,
 });
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
     <span class="hljs-keyword">if</span> (hasFooStringProperty(value)) {
-        <span class="hljs-comment">// This checks if the value has the property 'foo' and that is a string, but it's still typed as 'unknown'. :(</span>
+        <span class="hljs-comment">// This checks if the value has the property 'foo' and that is a string</span>
+        <span class="hljs-comment">// Can now access value.foo</span>
         <span class="hljs-comment">// ...</span>
     }
 }</code></pre>
-				<p>In the previous example, the guard just acts as a validator; it doesn&#39;t inform the type system. However, the factory takes an optional generic argument that will set the type and check the keys of your validator object. The factory also takes an optional interface name parameter (used for assertions messages below). This makes it extremely easy to build strongly typed guards for your interfaces:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasDefinition, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+				<p>In the previous example, the guard verifies that the value has the properties specified and infers the type of the object from the guards. Often, however, you have an interface and you want to verify that some object matches the interface. In this case, you can use the very similar <a href="globals.html#hasinterface">hasInterface</a> guard factory. In this case you specify the interface as a type parameter, and you then must specify guards that are consistent with the interface. This makes the guard safe from refactoring as renaming a property or changing its type will result in an error. Here is an example:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasInterface, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
 
 <span class="hljs-keyword">interface</span> Foo {
     foo: <span class="hljs-built_in">string</span>;
     bar: <span class="hljs-built_in">number</span>[];
 }
 
-<span class="hljs-keyword">const</span> isFoo = hasDefinition&lt;Foo&gt;({
+<span class="hljs-keyword">const</span> isFoo = hasInterface&lt;Foo&gt;(<span class="hljs-string">'Foo'</span>, {
     foo: isString,
     bar: isEach(isNumber),
-}, <span class="hljs-string">'Foo'</span>);
+});
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
     <span class="hljs-keyword">if</span> (isFoo(value)) {
-        <span class="hljs-comment">// Inside this block, value has type 'Foo' :)</span>
+        <span class="hljs-comment">// Inside this block, value has type 'Foo'</span>
         <span class="hljs-comment">// ...</span>
     }
 }</code></pre>
-				<p>You can, of course, nest the guards however deeply you&#39;d like.</p>
+				<p>You can combine these guards to nest as deeply as needed.</p>
 				<a href="#composing-guards" id="composing-guards" style="color: inherit; text-decoration: none;">
 					<h3>Composing Guards</h3>
 				</a>
@@ -389,10 +390,22 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 						</tr>
 					</thead>
 					<tbody><tr>
-							<td><a href="globals.html#hasproperties">hasProperties</a></td>
-							<td><strong>validators</strong>: PropertyValidators&lt;T&gt; - The property validators&lt;br /&gt;<strong>interfaceName</strong>: string - An optional interface name to report in the error message</td>
+							<td><a href="globals.html#hasinterface">hasInterface</a></td>
+							<td><strong>interfaceName</strong>: string - The interface name to report in the error message&lt;br /&gt;<strong>validators</strong>: InterfaceValidators&lt;T&gt; - The property validators</td>
 							<td>T</td>
+							<td>Creates a guard that tests if a value implements a specified interface</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#hasproperties">hasProperties</a></td>
+							<td><strong>validators</strong>: T - The property validators</td>
+							<td>ExtractProperties&lt;T&gt;</td>
 							<td>Creates a guard that tests if a value is an object with properties matching the specified property validators</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#isany">isAny</a></td>
+							<td></td>
+							<td>any</td>
+							<td>Guard that tests if the value is an any value (always true)</td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#isarray">isArray</a></td>
@@ -617,6 +630,12 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 							<td>Guard that tests if the value is undefined</td>
 						</tr>
 						<tr>
+							<td><a href="globals.html#isunknown">isUnknown</a></td>
+							<td></td>
+							<td>unknown</td>
+							<td>Guard that tests if the value is an any unknown value (always true)</td>
+						</tr>
+						<tr>
 							<td><!-- guardrefstop --></td>
 							<td></td>
 							<td></td>
@@ -647,6 +666,9 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 					<li class=" tsd-kind-interface tsd-is-external tsd-is-not-exported">
 						<a href="interfaces/hasexpectation.html" class="tsd-kind-icon">Has<wbr>Expectation</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-is-external tsd-is-not-exported">
+						<a href="interfaces/propertyvalidators.html" class="tsd-kind-icon">Property<wbr>Validators</a>
+					</li>
 					<li class=" tsd-kind-type-alias tsd-is-external">
 						<a href="globals.html#comparisonresult" class="tsd-kind-icon">Comparison<wbr>Result</a>
 					</li>
@@ -660,6 +682,9 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 						<a href="globals.html#extractintersection" class="tsd-kind-icon">Extract<wbr>Intersection</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external tsd-is-not-exported">
+						<a href="globals.html#extractproperties" class="tsd-kind-icon">Extract<wbr>Properties</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external tsd-is-not-exported">
 						<a href="globals.html#extractunion" class="tsd-kind-icon">Extract<wbr>Union</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external">
@@ -667,6 +692,9 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 					</li>
 					<li class=" tsd-kind-type-alias tsd-is-external">
 						<a href="globals.html#integer" class="tsd-kind-icon">Integer</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external">
+						<a href="globals.html#interfacevalidators" class="tsd-kind-icon">Interface<wbr>Validators</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-is-external">
 						<a href="globals.html#narrowable" class="tsd-kind-icon">Narrowable</a>
@@ -682,9 +710,6 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 					</li>
 					<li class=" tsd-kind-type-alias tsd-is-external">
 						<a href="globals.html#positiveinteger" class="tsd-kind-icon">Positive<wbr>Integer</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external">
-						<a href="globals.html#propertyvalidators" class="tsd-kind-icon">Property<wbr>Validators</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external tsd-is-not-exported">
 						<a href="globals.html#tag" class="tsd-kind-icon">Tag</a>
@@ -711,7 +736,13 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 						<a href="globals.html#assertvalue" class="tsd-kind-icon">assert<wbr>Value</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-external">
+						<a href="globals.html#hasinterface" class="tsd-kind-icon">has<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-external">
 						<a href="globals.html#hasproperties" class="tsd-kind-icon">has<wbr>Properties</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="globals.html#isany" class="tsd-kind-icon">is<wbr>Any</a>
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#isarray" class="tsd-kind-icon">is<wbr>Array</a>
@@ -823,6 +854,9 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 					</li>
 					<li class=" tsd-kind-function tsd-is-external">
 						<a href="globals.html#isundefined" class="tsd-kind-icon">is<wbr>Undefined</a>
+					</li>
+					<li class=" tsd-kind-function tsd-is-external">
+						<a href="globals.html#isunknown" class="tsd-kind-icon">is<wbr>Unknown</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-external">
 						<a href="globals.html#or" class="tsd-kind-icon">or</a>

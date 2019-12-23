@@ -8,7 +8,9 @@ export * from './assertions/assert';
 export * from './assertions/assertion-error';
 
 // guards
+export * from './guards/has-interface';
 export * from './guards/has-properties';
+export * from './guards/is-any';
 export * from './guards/is-array';
 export * from './guards/is-big-int';
 export * from './guards/is-boolean';
@@ -46,6 +48,7 @@ export * from './guards/is-string-not-containing';
 export * from './guards/is-string';
 export * from './guards/is-symbol';
 export * from './guards/is-undefined';
+export * from './guards/is-unknown';
 
 // operators
 export * from './operators/and';

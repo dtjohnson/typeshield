@@ -1,13 +1,13 @@
 import { Comparable, Guard } from '../types';
-import { hasProperties } from './has-properties';
+import { hasInterface } from './has-interface';
 import { isFunction } from './is-function';
 
 /**
  * @ignore
  */
-const guard = hasProperties<Comparable>({
+const guard = hasInterface<Comparable>('Comparable', {
     compareTo: isFunction,
-}, 'Comparable');
+});
 
 /**
  * Guard that tests if the value implements the [[Comparable]] interface

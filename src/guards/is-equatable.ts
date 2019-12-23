@@ -1,13 +1,13 @@
 import { Equatable, Guard } from '../types';
-import { hasProperties } from './has-properties';
+import { hasInterface } from './has-interface';
 import { isFunction } from './is-function';
 
 /**
  * @ignore
  */
-const guard = hasProperties<Equatable>({
+const guard = hasInterface<Equatable>('Equatable', {
     equals: isFunction,
-}, 'Equatable');
+});
 
 /**
  * Guard that tests if the value implements the [[Equatable]] interface

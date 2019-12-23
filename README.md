@@ -170,42 +170,43 @@ function doSomething(value: unknown) {
 ### Object Properties
 Similarly, you can check the properties of an object using the [[hasProperties]] guard factory:
 ```ts
-import { hasDefinition, isString } from 'guardian';
+import { hasProperties, isString } from 'guardian';
 
-const hasFooStringProperty = hasDefinition({
+const hasFooStringProperty = hasProperties({
     foo: isString,
 });
 
 function doSomething(value: unknown) {
     if (hasFooStringProperty(value)) {
-        // This checks if the value has the property 'foo' and that is a string, but it's still typed as 'unknown'. :(
+        // This checks if the value has the property 'foo' and that is a string
+        // Can now access value.foo
         // ...
     }
 }
 ```
 
-In the previous example, the guard just acts as a validator; it doesn't inform the type system. However, the factory takes an optional generic argument that will set the type and check the keys of your validator object. The factory also takes an optional interface name parameter (used for assertions messages below). This makes it extremely easy to build strongly typed guards for your interfaces:
+In the previous example, the guard verifies that the value has the properties specified and infers the type of the object from the guards. Often, however, you have an interface and you want to verify that some object matches the interface. In this case, you can use the very similar [[hasInterface]] guard factory. In this case you specify the interface as a type parameter, and you then must specify guards that are consistent with the interface. This makes the guard safe from refactoring as renaming a property or changing its type will result in an error. Here is an example:
 ```ts
-import { hasDefinition, isString } from 'guardian';
+import { hasInterface, isString } from 'guardian';
 
 interface Foo {
     foo: string;
     bar: number[];
 }
 
-const isFoo = hasDefinition<Foo>({
+const isFoo = hasInterface<Foo>('Foo', {
     foo: isString,
     bar: isEach(isNumber),
-}, 'Foo');
+});
 
 function doSomething(value: unknown) {
     if (isFoo(value)) {
-        // Inside this block, value has type 'Foo' :)
+        // Inside this block, value has type 'Foo'
         // ...
     }
 }
 ```
-You can, of course, nest the guards however deeply you'd like.
+You can combine these guards to nest as deeply as needed.
 
 ### Composing Guards
 Guardian comes with two operators ([[or]] and [[and]]) for easily combining guards together to create new guards. (In fact, many of the guards included in Guardian are created this way.) The [[or]] operator can be used to check if a value matches one of two or more guards.
@@ -354,7 +355,9 @@ function doSomething(arg: All): string {
 <!-- guardref -->
 | Name | Factory Params | Return Type | Description |
 | --- | --- | --- | --- |
-| [[hasProperties]] | __validators__: PropertyValidators&lt;T&gt; - The property validators&lt;br /&gt;__interfaceName__: string - An optional interface name to report in the error message | T | Creates a guard that tests if a value is an object with properties matching the specified property validators
+| [[hasInterface]] | __interfaceName__: string - The interface name to report in the error message&lt;br /&gt;__validators__: InterfaceValidators&lt;T&gt; - The property validators | T | Creates a guard that tests if a value implements a specified interface
+| [[hasProperties]] | __validators__: T - The property validators | ExtractProperties&lt;T&gt; | Creates a guard that tests if a value is an object with properties matching the specified property validators
+| [[isAny]] |  | any | Guard that tests if the value is an any value (always true)
 | [[isArray]] |  | unknown[] | Guard that tests if the value is an array
 | [[isBigInt]] |  | bigint | Guard that tests if the value is an big integer
 | [[isBoolean]] |  | boolean | Guard that tests if the value is a boolean
@@ -392,4 +395,5 @@ function doSomething(arg: All): string {
 | [[isStringNotContaining]] | __substring__: string - The substring to check for | string | Creates a guard that tests if a value is a string that does not contain the specified substring
 | [[isSymbol]] |  | symbol | Guard that tests if the value is a symbol
 | [[isUndefined]] |  | undefined | Guard that tests if the value is undefined
+| [[isUnknown]] |  | unknown | Guard that tests if the value is an any unknown value (always true)
 <!-- guardrefstop -->
