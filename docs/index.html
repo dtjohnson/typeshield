@@ -73,8 +73,10 @@
 				</a>
 				<!-- toc -->
 				<ul>
+					<li><a href="#installation">Installation</a></li>
 					<li><a href="#guards">Guards</a><ul>
 							<li><a href="#prebuilt-guards">Prebuilt Guards</a></li>
+							<li><a href="#comparisons">Comparisons</a></li>
 							<li><a href="#arrays">Arrays</a></li>
 							<li><a href="#object-properties">Object Properties</a></li>
 							<li><a href="#composing-guards">Composing Guards</a></li>
@@ -89,6 +91,17 @@
 					<li><a href="#guard-reference">Guard Reference</a></li>
 				</ul>
 				<!-- tocstop -->
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h2>Installation</h2>
+				</a>
+				<p>Guardian can be installed like any other npm package.</p>
+				<pre><code class="language-bash">npm install guardian</code></pre>
+				<p>It can then be imported into TypeScript or ES6 JavaScript (with Webpack or Rollup):</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ... } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;</code></pre>
+				<p>It can also be used in plain Node.js:</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> { ... } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'guardian'</span>);</code></pre>
+				<p>or</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> guardian = <span class="hljs-built_in">require</span>(<span class="hljs-string">'guardian'</span>);</code></pre>
 				<a href="#guards" id="guards" style="color: inherit; text-decoration: none;">
 					<h2>Guards</h2>
 				</a>
@@ -142,14 +155,58 @@
 doSomethingWithNumber(foo); <span class="hljs-comment">// OK</span>
 doSomethingWithInteger(foo); <span class="hljs-comment">// Error! Argument of type 'number' is not assignable to parameter of type 'Integer'.</span>
 
-<span class="hljs-keyword">if</span> (isInteger(foo)) { <span class="hljs-comment">// Type is 'Integer'</span>
+<span class="hljs-keyword">if</span> (isInteger(foo)) { <span class="hljs-comment">// Type is now 'Integer'</span>
     doSomethingWithNumber(foo); <span class="hljs-comment">// Still OK as 'Integer' is also a 'number'</span>
     doSomethingWithInteger(foo); <span class="hljs-comment">// OK</span>
 }</code></pre>
+				<a href="#comparisons" id="comparisons" style="color: inherit; text-decoration: none;">
+					<h3>Comparisons</h3>
+				</a>
+				<p>There are several guards used to compare values with others. The correct one to use depends on your use case:</p>
+				<ul>
+					<li><a href="globals.html#isidenticalto">isIdenticalTo</a> - Used to compare reference equality using the strict comparison operator (===). Primitives are compared by value but objects are only identical if they have the same reference.</li>
+					<li><a href="globals.html#isequalto">isEqualTo</a> - Used to compare values. Will first check if objects are identical before falling back to check using the <a href="interfaces/equatable.html">Equatable</a> or <a href="interfaces/comparable.html">Comparable</a> interfaces. These interfaces allow you to define custom value comparisons.</li>
+					<li><a href="globals.html#isdeepequalto">isDeepEqualTo</a> - Recursively compares object values using the <a href="https://www.npmjs.com/package/deep-equal">deep-equal</a> package.</li>
+					<li><a href="globals.html#isgreaterthan">isGreaterThan</a>, <a href="globals.html#isgreaterthanorequalto">isGreaterThanOrEqualTo</a>, <a href="globals.html#islessthan">isLessThan</a>, <a href="globals.html#islessthanorequalto">isLessThanOrEqualTo</a> - Compares objects for ordering using the <a href="interfaces/comparable.html">Comparable</a> interface or the comparison operators if not implemented. (Note that using <code>&gt;=</code> or <code>&lt;=</code> on objects that do not implement custom <code>valueOf</code> or <code>toString</code> methods will always result in <code>true</code> as their values are compared by string and have the same string representation.)</li>
+				</ul>
+				<p>Here is an example of a custom class implementing <a href="interfaces/equatable.html">Equatable</a> and <a href="interfaces/comparable.html">Comparable</a>:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Comparable, ComparisonResult, Equatable, isGreaterThan, isInstanceOf } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-keyword">class</span> Duration <span class="hljs-keyword">implements</span> Equatable, Comparable {
+    <span class="hljs-keyword">public</span> hours: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">public</span> seconds: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">constructor</span>(<span class="hljs-params">hours: <span class="hljs-built_in">number</span>, seconds: <span class="hljs-built_in">number</span></span>) {
+        <span class="hljs-keyword">this</span>.hours = hours;
+        <span class="hljs-keyword">this</span>.seconds = seconds;
+    }
+
+    <span class="hljs-keyword">public</span> getTotalSeconds(): <span class="hljs-built_in">number</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.hours * <span class="hljs-number">60</span> + <span class="hljs-keyword">this</span>.seconds;
+    }
+
+    <span class="hljs-keyword">public</span> equals(other: unknown): <span class="hljs-built_in">boolean</span> {
+        <span class="hljs-keyword">if</span> (!isInstanceOf(Duration)(other)) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getTotalSeconds() === other.getTotalSeconds();
+    }
+
+    <span class="hljs-keyword">public</span> compareTo(other: unknown): ComparisonResult {
+        <span class="hljs-keyword">if</span> (!isInstanceOf(Duration)(other)) <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+        <span class="hljs-keyword">const</span> thisSeconds = <span class="hljs-keyword">this</span>.getTotalSeconds();
+        <span class="hljs-keyword">const</span> otherSeconds = other.getTotalSeconds();
+        <span class="hljs-keyword">if</span> (thisSeconds &gt; otherSeconds) <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span> (thisSeconds &lt; otherSeconds) <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+}
+
+<span class="hljs-keyword">const</span> isGreaterThanZeroDuration = isGreaterThan(<span class="hljs-keyword">new</span> Duration(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
+isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span class="hljs-number">5</span>, <span class="hljs-number">0</span>)); <span class="hljs-comment">// true</span>
+isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span class="hljs-number">0</span>, <span class="hljs-number">-3</span>)); <span class="hljs-comment">// false</span></code></pre>
 				<a href="#arrays" id="arrays" style="color: inherit; text-decoration: none;">
 					<h3>Arrays</h3>
 				</a>
-				<p>Items in arrays can also be checked using the <a href="globals.html#iseach">isEach</a> guard factory. The guard will first check that the value is an array and will then check each item in the array against the specified guard.</p>
+				<p>Items in arrays can be checked using the <a href="globals.html#iseach">isEach</a> guard factory. The guard will first check that the value is an array and will then check each item in the array against the specified guard.</p>
 				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isEach, isNumber } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
 
 <span class="hljs-keyword">const</span> isArrayOfNumbers = isEach(isNumber);
@@ -176,7 +233,7 @@ doSomethingWithInteger(foo); <span class="hljs-comment">// Error! Argument of ty
         <span class="hljs-comment">// ...</span>
     }
 }</code></pre>
-				<p>In the previous example, the guard just asks as a validator. It doesn&#39;t inform the type system. However, the factory takes an optional generic argument that will set the type and check the keys of your validator object. The factory also takes an optional interface name parameter (used for assertions below). This makes it extremely easy to build strongly typed guards for your interfaces:</p>
+				<p>In the previous example, the guard just acts as a validator; it doesn&#39;t inform the type system. However, the factory takes an optional generic argument that will set the type and check the keys of your validator object. The factory also takes an optional interface name parameter (used for assertions messages below). This makes it extremely easy to build strongly typed guards for your interfaces:</p>
 				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasDefinition, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
 
 <span class="hljs-keyword">interface</span> Foo {
@@ -195,11 +252,11 @@ doSomethingWithInteger(foo); <span class="hljs-comment">// Error! Argument of ty
         <span class="hljs-comment">// ...</span>
     }
 }</code></pre>
-				<p>You can, of course, nest the guards however deep you&#39;d like.</p>
+				<p>You can, of course, nest the guards however deeply you&#39;d like.</p>
 				<a href="#composing-guards" id="composing-guards" style="color: inherit; text-decoration: none;">
 					<h3>Composing Guards</h3>
 				</a>
-				<p>Guardian comes with two operators (<a href="globals.html#or">or</a> and <a href="globals.html#and">and</a>) for easily combining guards together to create new guards. (In fact, many of the guards included in Guardian are created this way.) The <a href="globals.html#or">or</a> operator can be used to check if a value matches on of 2 or more guards.</p>
+				<p>Guardian comes with two operators (<a href="globals.html#or">or</a> and <a href="globals.html#and">and</a>) for easily combining guards together to create new guards. (In fact, many of the guards included in Guardian are created this way.) The <a href="globals.html#or">or</a> operator can be used to check if a value matches one of two or more guards.</p>
 				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isNumber, isString, isUndefined } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
@@ -272,14 +329,14 @@ assertValue(isString, myVar, <span class="hljs-string">'myVar'</span>); <span cl
 
 <span class="hljs-keyword">const</span> myVar: <span class="hljs-built_in">number</span> = <span class="hljs-number">5</span>;
 assertValue(isFoo, myVar); <span class="hljs-comment">// throws AssertionError: Expected value to match 'isFoo' but received: 5</span></code></pre>
-				<p>In this example the error message isn&#39;t very friendly. You can make the message more friendly by using the optional 4th parameter. This parameter is an expectation message and it is a sentence fragment that follows <code>&#39;expected variable to &#39;</code>:</p>
+				<p>In this example the error message isn&#39;t very friendly. You can make the message more friendly by using the optional 4th parameter. This parameter is an expectation message and it is a sentence fragment that follows <code>&#39;expected value to &#39;</code>:</p>
 				<pre><code class="language-ts">assertValue(isFoo, myVar, <span class="hljs-string">'myVar'</span>, <span class="hljs-string">'be a Foo'</span>); <span class="hljs-comment">// throws AssertionError: Expected 'myVar' to be a Foo but received: 5</span></code></pre>
-				<p>The downside of this approach is that you need to specify the expectation each time you make a value assertion. There is a better alternative approach. The <a href="globals.html#guard">Guard</a> and <a href="globals.html#validator">Validator</a> type includes an additional optional <code>expectation</code> property that allows you to attach the expectation directly to the function. To use it:</p>
+				<p>The downside of this approach is that you need to specify the expectation each time you make a value assertion. There is a better alternative approach. The <a href="globals.html#guard">Guard</a> and <a href="globals.html#validator">Validator</a> types include an additional optional <code>expectation</code> property that allows you to attach the expectation directly to the function. To use it:</p>
 				<pre><code class="language-ts">(isFoo <span class="hljs-keyword">as</span> Guard).expectation = <span class="hljs-string">'be a Foo'</span>;
 
 <span class="hljs-comment">// From now on:</span>
 assertValue(isFoo, myVar); <span class="hljs-comment">// throws AssertionError: Expected value to be a Foo but received: 5</span></code></pre>
-				<p>Most of the prebuild guards in Guardian use this property to set more helpful messages, which is why the example with <a href="globals.html#isstring">isString</a> above looked good.</p>
+				<p>Most of the prebuilt guards in Guardian use this property to set more helpful messages, which is why the example with <a href="globals.html#isstring">isString</a> above looked good.</p>
 				<a href="#assert-property-decorator" id="assert-property-decorator" style="color: inherit; text-decoration: none;">
 					<h3>Assert Property Decorator</h3>
 				</a>
@@ -333,7 +390,7 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 					</thead>
 					<tbody><tr>
 							<td><a href="globals.html#hasproperties">hasProperties</a></td>
-							<td><strong>validators</strong>: PropertyValidators<T> - The property validators<br /><strong>interfaceName</strong>: string - An optional interface name to report in the error message</td>
+							<td><strong>validators</strong>: PropertyValidators&lt;T&gt; - The property validators&lt;br /&gt;<strong>interfaceName</strong>: string - An optional interface name to report in the error message</td>
 							<td>T</td>
 							<td>Creates a guard that tests if a value is an object with properties matching the specified property validators</td>
 						</tr>
@@ -369,19 +426,19 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 						</tr>
 						<tr>
 							<td><a href="globals.html#isdeepequalto">isDeepEqualTo</a></td>
-							<td><strong>other</strong>: T - The object to compare values to<br /><strong>strict</strong>: boolean - True to use strict equality (default) and false to use coercive equality</td>
+							<td><strong>other</strong>: T - The object to compare values to&lt;br /&gt;<strong>strict</strong>: boolean - True to use strict equality (default) and false to use coercive equality</td>
 							<td>T</td>
 							<td>Creates a guard that tests if a value is equal to the specified value using the <a href="https://www.npmjs.com/package/deep-equal" class="external">deep-equal package</a></td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#isdefined">isDefined</a></td>
 							<td></td>
-							<td>NonNullable<T></td>
+							<td>NonNullable&lt;T&gt;</td>
 							<td>Guard that tests if the value is not null and not undefined</td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#iseach">isEach</a></td>
-							<td><strong>eachGuard</strong>: Guard<T> - The guard used for each item in the array.</td>
+							<td><strong>eachGuard</strong>: Guard&lt;T&gt; - The guard used for each item in the array.</td>
 							<td>T[]</td>
 							<td>Creates a guard that tests if a value is an array and that each value in the array satisfies the given guard.</td>
 						</tr>
@@ -407,7 +464,7 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 							<td><a href="globals.html#isequalto">isEqualTo</a></td>
 							<td><strong>other</strong>: T - The object to compare values to</td>
 							<td>T</td>
-							<td>Creates a guard that tests if a value is equal to a specified object. Values are compared by identity first andthen by using the <a href="interfaces/equatable.html">Equatable</a> or <a href="interfaces/comparable.html">Comparable</a> interfaces, if implemented.</td>
+							<td>Creates a guard that tests if a value is equal to a specified object. Values are compared by identity first and then by using the <a href="interfaces/equatable.html">Equatable</a> or <a href="interfaces/comparable.html">Comparable</a> interfaces, if implemented.</td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#isequatable">isEquatable</a></td>
@@ -425,23 +482,23 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 							<td><a href="globals.html#isgreaterthan">isGreaterThan</a></td>
 							<td><strong>other</strong>: T - The value to compare to</td>
 							<td>T</td>
-							<td>Creates a guard that tests if a value if greater than a specified value. Will firstcompare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.</td>
+							<td>Creates a guard that tests if a value is greater than a specified value. Will first compare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.</td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#isgreaterthanorequalto">isGreaterThanOrEqualTo</a></td>
 							<td><strong>other</strong>: T - The value to compare to</td>
 							<td>T</td>
-							<td>Creates a guard that tests if a value if greater than or equal to a specified value. Will firstcompare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.Note that objects not implementing <a href="interfaces/comparable.html">Comparable</a> or custom value representations may return unexpectedresults as JS will revert to comparing string representations.</td>
+							<td>Creates a guard that tests if a value is greater than or equal to a specified value. Will first compare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison. Note that objects not implementing <a href="interfaces/comparable.html">Comparable</a> or custom value representations may return unexpected results as JS will revert to comparing string representations.</td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#isidenticalto">isIdenticalTo</a></td>
 							<td><strong>other</strong>: T - The other value to compare to</td>
 							<td>T</td>
-							<td>Creates a guard that tests if a value is identical to another value. This uses the JSstrict equality comparison operator (===) so primitives are compared by value but objectsare compared by reference.</td>
+							<td>Creates a guard that tests if a value is identical to another value. This uses the JS strict equality comparison operator (===) so primitives are compared by value but objects are compared by reference.</td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#isinstanceof">isInstanceOf</a></td>
-							<td><strong>constructor</strong>: Constructor<T> - The constructor</td>
+							<td><strong>constructor</strong>: Constructor&lt;T&gt; - The constructor</td>
 							<td>T</td>
 							<td>Creates a guard that tests if a value is an instance of the specified constructor</td>
 						</tr>
@@ -455,13 +512,13 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 							<td><a href="globals.html#islessthan">isLessThan</a></td>
 							<td><strong>other</strong>: T - The value to compare to</td>
 							<td>T</td>
-							<td>Creates a guard that tests if a value if less than a specified value. Will firstcompare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.</td>
+							<td>Creates a guard that tests if a value is less than a specified value. Will first compare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.</td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#islessthanorequalto">isLessThanOrEqualTo</a></td>
 							<td><strong>other</strong>: T - The value to compare to</td>
 							<td>T</td>
-							<td>Creates a guard that tests if a value if less than or equal to a specified value. Will firstcompare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison.Note that objects not implementing <a href="interfaces/comparable.html">Comparable</a> or custom value representations may return unexpectedresults as JS will revert to comparing string representations.</td>
+							<td>Creates a guard that tests if a value is less than or equal to a specified value. Will first compare using the <a href="interfaces/comparable.html">Comparable</a> interface, if implemented and will fall back to operator comparison. Note that objects not implementing <a href="interfaces/comparable.html">Comparable</a> or custom value representations may return unexpected results as JS will revert to comparing string representations.</td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#ismatch">isMatch</a></td>

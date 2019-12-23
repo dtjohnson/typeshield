@@ -49,7 +49,7 @@ for (const reflection of project.getReflectionsByKind(ReflectionKind.Function)) 
 
         guardRefs.push({
             name: declaration.name,
-            description: (signature.comment?.shortText ?? '').replace(/\n/ug, ''),
+            description: (signature.comment?.shortText ?? '').replace(/\n/ug, ' '),
             returnType,
             returnTypeRef: isInternalRef(returnType),
         });
@@ -61,14 +61,14 @@ for (const reflection of project.getReflectionsByKind(ReflectionKind.Function)) 
 
         guardRefs.push({
             name: declaration.name,
-            description: (signature.comment?.shortText ?? '').replace(/\n/ug, ''),
+            description: (signature.comment?.shortText ?? '').replace(/\n/ug, ' '),
             returnType,
             returnTypeRef: isInternalRef(returnType),
             factoryParams: (signature.parameters ?? []).map(param => ({
                 name: param.name,
                 type: param.type!.toString(),
                 typeRef: isInternalRef(param.type!.toString()),
-                description: (param.comment?.text ?? '').replace(/\n/ug, ''),
+                description: (param.comment?.text ?? '').replace(/\n/ug, ' '),
             })),
         });
     }
@@ -82,7 +82,7 @@ let table = guardRefs
     .map(ref => `| [[${ref.name}]] | ${(ref.factoryParams ?? []).map(param => `__${param.name}__: ${param.typeRef ? `[[${param.type}]]` : param.type} - ${param.description}`).join('<br />')} | ${ref.returnTypeRef ? `[[${ref.returnType}]]` : ref.returnType} | ${ref.description}`)
     .join('\n');
 
-table = `<!-- guardref -->\n| Name | Factory Params | Return Type | Description |\n| --- | --- | --- | --- |\n${table}\n<!-- guardrefstop -->`;
+table = `<!-- guardref -->\n| Name | Factory Params | Return Type | Description |\n| --- | --- | --- | --- |\n${table.replace(/</ug, '&lt;').replace(/>/ug, '&gt;')}\n<!-- guardrefstop -->`;
 
 // Read in the readme, replace the placeholder text, and rewrite it.
 let readme = fs.readFileSync('README.md', 'utf8');

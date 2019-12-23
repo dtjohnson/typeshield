@@ -6,8 +6,10 @@ Guardian is a collection of composable TypeScript/JavaScript type guards and ass
 
 <!-- toc -->
 
+- [Installation](#installation)
 - [Guards](#guards)
   * [Prebuilt Guards](#prebuilt-guards)
+  * [Comparisons](#comparisons)
   * [Arrays](#arrays)
   * [Object Properties](#object-properties)
   * [Composing Guards](#composing-guards)
@@ -18,6 +20,26 @@ Guardian is a collection of composable TypeScript/JavaScript type guards and ass
 - [Guard Reference](#guard-reference)
 
 <!-- tocstop -->
+
+## Installation
+Guardian can be installed like any other npm package.
+```bash
+npm install guardian
+```
+
+It can then be imported into TypeScript or ES6 JavaScript (with Webpack or Rollup):
+```ts
+import { ... } from 'guardian';
+```
+
+It can also be used in plain Node.js:
+```js
+const { ... } = require('guardian');
+```
+or
+```js
+const guardian = require('guardian');
+```
 
 ## Guards
 
@@ -80,14 +102,58 @@ const foo: number = 5; // Type is 'number'
 doSomethingWithNumber(foo); // OK
 doSomethingWithInteger(foo); // Error! Argument of type 'number' is not assignable to parameter of type 'Integer'.
 
-if (isInteger(foo)) { // Type is 'Integer'
+if (isInteger(foo)) { // Type is now 'Integer'
     doSomethingWithNumber(foo); // Still OK as 'Integer' is also a 'number'
     doSomethingWithInteger(foo); // OK
 }
 ```
 
+### Comparisons
+There are several guards used to compare values with others. The correct one to use depends on your use case:
+* [[isIdenticalTo]] - Used to compare reference equality using the strict comparison operator (===). Primitives are compared by value but objects are only identical if they have the same reference.
+* [[isEqualTo]] - Used to compare values. Will first check if objects are identical before falling back to check using the [[Equatable]] or [[Comparable]] interfaces. These interfaces allow you to define custom value comparisons.
+* [[isDeepEqualTo]] - Recursively compares object values using the [deep-equal](https://www.npmjs.com/package/deep-equal) package.
+* [[isGreaterThan]], [[isGreaterThanOrEqualTo]], [[isLessThan]], [[isLessThanOrEqualTo]] - Compares objects for ordering using the [[Comparable]] interface or the comparison operators if not implemented. (Note that using `>=` or `<=` on objects that do not implement custom `valueOf` or `toString` methods will always result in `true` as their values are compared by string and have the same string representation.)
+
+Here is an example of a custom class implementing [[Equatable]] and [[Comparable]]:
+```ts
+import { Comparable, ComparisonResult, Equatable, isGreaterThan, isInstanceOf } from 'guardian';
+
+class Duration implements Equatable, Comparable {
+    public hours: number = 0;
+    public seconds: number = 0;
+
+    public constructor(hours: number, seconds: number) {
+        this.hours = hours;
+        this.seconds = seconds;
+    }
+
+    public getTotalSeconds(): number {
+        return this.hours * 60 + this.seconds;
+    }
+
+    public equals(other: unknown): boolean {
+        if (!isInstanceOf(Duration)(other)) return false;
+        return this.getTotalSeconds() === other.getTotalSeconds();
+    }
+
+    public compareTo(other: unknown): ComparisonResult {
+        if (!isInstanceOf(Duration)(other)) return undefined;
+        const thisSeconds = this.getTotalSeconds();
+        const otherSeconds = other.getTotalSeconds();
+        if (thisSeconds > otherSeconds) return 1;
+        if (thisSeconds < otherSeconds) return -1;
+        return 0;
+    }
+}
+
+const isGreaterThanZeroDuration = isGreaterThan(new Duration(0, 0));
+isGreaterThanZeroDuration(new Duration(5, 0)); // true
+isGreaterThanZeroDuration(new Duration(0, -3)); // false
+```
+
 ### Arrays
-Items in arrays can also be checked using the [[isEach]] guard factory. The guard will first check that the value is an array and will then check each item in the array against the specified guard.
+Items in arrays can be checked using the [[isEach]] guard factory. The guard will first check that the value is an array and will then check each item in the array against the specified guard.
 ```ts
 import { isEach, isNumber } from 'guardian';
 
@@ -118,7 +184,7 @@ function doSomething(value: unknown) {
 }
 ```
 
-In the previous example, the guard just asks as a validator. It doesn't inform the type system. However, the factory takes an optional generic argument that will set the type and check the keys of your validator object. The factory also takes an optional interface name parameter (used for assertions below). This makes it extremely easy to build strongly typed guards for your interfaces:
+In the previous example, the guard just acts as a validator; it doesn't inform the type system. However, the factory takes an optional generic argument that will set the type and check the keys of your validator object. The factory also takes an optional interface name parameter (used for assertions messages below). This makes it extremely easy to build strongly typed guards for your interfaces:
 ```ts
 import { hasDefinition, isString } from 'guardian';
 
@@ -139,10 +205,10 @@ function doSomething(value: unknown) {
     }
 }
 ```
-You can, of course, nest the guards however deep you'd like.
+You can, of course, nest the guards however deeply you'd like.
 
 ### Composing Guards
-Guardian comes with two operators ([[or]] and [[and]]) for easily combining guards together to create new guards. (In fact, many of the guards included in Guardian are created this way.) The [[or]] operator can be used to check if a value matches on of 2 or more guards.
+Guardian comes with two operators ([[or]] and [[and]]) for easily combining guards together to create new guards. (In fact, many of the guards included in Guardian are created this way.) The [[or]] operator can be used to check if a value matches one of two or more guards.
 ```ts
 import { isNumber, isString, isUndefined } from 'guardian';
 
@@ -227,19 +293,19 @@ function isFoo(value; unknown): value is Foo {
 const myVar: number = 5;
 assertValue(isFoo, myVar); // throws AssertionError: Expected value to match 'isFoo' but received: 5
 ```
-In this example the error message isn't very friendly. You can make the message more friendly by using the optional 4th parameter. This parameter is an expectation message and it is a sentence fragment that follows `'expected variable to '`:
+In this example the error message isn't very friendly. You can make the message more friendly by using the optional 4th parameter. This parameter is an expectation message and it is a sentence fragment that follows `'expected value to '`:
 ```ts
 assertValue(isFoo, myVar, 'myVar', 'be a Foo'); // throws AssertionError: Expected 'myVar' to be a Foo but received: 5
 ```
 
-The downside of this approach is that you need to specify the expectation each time you make a value assertion. There is a better alternative approach. The [[Guard]] and [[Validator]] type includes an additional optional `expectation` property that allows you to attach the expectation directly to the function. To use it:
+The downside of this approach is that you need to specify the expectation each time you make a value assertion. There is a better alternative approach. The [[Guard]] and [[Validator]] types include an additional optional `expectation` property that allows you to attach the expectation directly to the function. To use it:
 ```ts
 (isFoo as Guard).expectation = 'be a Foo';
 
 // From now on:
 assertValue(isFoo, myVar); // throws AssertionError: Expected value to be a Foo but received: 5
 ```
-Most of the prebuild guards in Guardian use this property to set more helpful messages, which is why the example with [[isString]] above looked good.
+Most of the prebuilt guards in Guardian use this property to set more helpful messages, which is why the example with [[isString]] above looked good.
 
 ### Assert Property Decorator
 
@@ -288,28 +354,28 @@ function doSomething(arg: All): string {
 <!-- guardref -->
 | Name | Factory Params | Return Type | Description |
 | --- | --- | --- | --- |
-| [[hasProperties]] | __validators__: PropertyValidators<T> - The property validators<br />__interfaceName__: string - An optional interface name to report in the error message | T | Creates a guard that tests if a value is an object with properties matching the specified property validators
+| [[hasProperties]] | __validators__: PropertyValidators&lt;T&gt; - The property validators&lt;br /&gt;__interfaceName__: string - An optional interface name to report in the error message | T | Creates a guard that tests if a value is an object with properties matching the specified property validators
 | [[isArray]] |  | unknown[] | Guard that tests if the value is an array
 | [[isBigInt]] |  | bigint | Guard that tests if the value is an big integer
 | [[isBoolean]] |  | boolean | Guard that tests if the value is a boolean
 | [[isComparable]] |  | [[Comparable]] | Guard that tests if the value implements the [[Comparable]] interface
 | [[isDate]] |  | Date | Guard that tests if the value is an instance of Date
-| [[isDeepEqualTo]] | __other__: T - The object to compare values to<br />__strict__: boolean - True to use strict equality (default) and false to use coercive equality | T | Creates a guard that tests if a value is equal to the specified value using the [deep-equal package]{@link https://www.npmjs.com/package/deep-equal}
-| [[isDefined]] |  | NonNullable<T> | Guard that tests if the value is not null and not undefined
-| [[isEach]] | __eachGuard__: Guard<T> - The guard used for each item in the array. | T[] | Creates a guard that tests if a value is an array and that each value in the array satisfies the given guard.
+| [[isDeepEqualTo]] | __other__: T - The object to compare values to&lt;br /&gt;__strict__: boolean - True to use strict equality (default) and false to use coercive equality | T | Creates a guard that tests if a value is equal to the specified value using the [deep-equal package]{@link https://www.npmjs.com/package/deep-equal}
+| [[isDefined]] |  | NonNullable&lt;T&gt; | Guard that tests if the value is not null and not undefined
+| [[isEach]] | __eachGuard__: Guard&lt;T&gt; - The guard used for each item in the array. | T[] | Creates a guard that tests if a value is an array and that each value in the array satisfies the given guard.
 | [[isEmail]] |  | [[Email]] | Guard that tests if the value is an email address
 | [[isEmptyArray]] |  | unknown[] | Guard that tests if the value is an empty array
 | [[isEmptyString]] |  | "" | Guard that tests if the value is an empty string
-| [[isEqualTo]] | __other__: T - The object to compare values to | T | Creates a guard that tests if a value is equal to a specified object. Values are compared by identity first andthen by using the [[Equatable]] or [[Comparable]] interfaces, if implemented.
+| [[isEqualTo]] | __other__: T - The object to compare values to | T | Creates a guard that tests if a value is equal to a specified object. Values are compared by identity first and then by using the [[Equatable]] or [[Comparable]] interfaces, if implemented.
 | [[isEquatable]] |  | [[Equatable]] | Guard that tests if the value implements the [[Equatable]] interface
 | [[isFunction]] |  | function | Guard that tests if the value is a function
-| [[isGreaterThan]] | __other__: T - The value to compare to | T | Creates a guard that tests if a value if greater than a specified value. Will firstcompare using the [[Comparable]] interface, if implemented and will fall back to operator comparison.
-| [[isGreaterThanOrEqualTo]] | __other__: T - The value to compare to | T | Creates a guard that tests if a value if greater than or equal to a specified value. Will firstcompare using the [[Comparable]] interface, if implemented and will fall back to operator comparison.Note that objects not implementing [[Comparable]] or custom value representations may return unexpectedresults as JS will revert to comparing string representations.
-| [[isIdenticalTo]] | __other__: T - The other value to compare to | T | Creates a guard that tests if a value is identical to another value. This uses the JSstrict equality comparison operator (===) so primitives are compared by value but objectsare compared by reference.
-| [[isInstanceOf]] | __constructor__: Constructor<T> - The constructor | T | Creates a guard that tests if a value is an instance of the specified constructor
+| [[isGreaterThan]] | __other__: T - The value to compare to | T | Creates a guard that tests if a value is greater than a specified value. Will first compare using the [[Comparable]] interface, if implemented and will fall back to operator comparison.
+| [[isGreaterThanOrEqualTo]] | __other__: T - The value to compare to | T | Creates a guard that tests if a value is greater than or equal to a specified value. Will first compare using the [[Comparable]] interface, if implemented and will fall back to operator comparison. Note that objects not implementing [[Comparable]] or custom value representations may return unexpected results as JS will revert to comparing string representations.
+| [[isIdenticalTo]] | __other__: T - The other value to compare to | T | Creates a guard that tests if a value is identical to another value. This uses the JS strict equality comparison operator (===) so primitives are compared by value but objects are compared by reference.
+| [[isInstanceOf]] | __constructor__: Constructor&lt;T&gt; - The constructor | T | Creates a guard that tests if a value is an instance of the specified constructor
 | [[isInteger]] |  | [[Integer]] | Guard that tests if the value is an integer
-| [[isLessThan]] | __other__: T - The value to compare to | T | Creates a guard that tests if a value if less than a specified value. Will firstcompare using the [[Comparable]] interface, if implemented and will fall back to operator comparison.
-| [[isLessThanOrEqualTo]] | __other__: T - The value to compare to | T | Creates a guard that tests if a value if less than or equal to a specified value. Will firstcompare using the [[Comparable]] interface, if implemented and will fall back to operator comparison.Note that objects not implementing [[Comparable]] or custom value representations may return unexpectedresults as JS will revert to comparing string representations.
+| [[isLessThan]] | __other__: T - The value to compare to | T | Creates a guard that tests if a value is less than a specified value. Will first compare using the [[Comparable]] interface, if implemented and will fall back to operator comparison.
+| [[isLessThanOrEqualTo]] | __other__: T - The value to compare to | T | Creates a guard that tests if a value is less than or equal to a specified value. Will first compare using the [[Comparable]] interface, if implemented and will fall back to operator comparison. Note that objects not implementing [[Comparable]] or custom value representations may return unexpected results as JS will revert to comparing string representations.
 | [[isMatch]] | __regexp__: RegExp - The regular expression | string | Creates a guard that tests if a value is a string that matches the specified RegExp
 | [[isNegative]] |  | [[Negative]] | Guard that tests if the value is a negative number
 | [[isNegativeInteger]] |  | [[NegativeInteger]] | Guard that tests if the value is a negative integer
