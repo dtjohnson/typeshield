@@ -4,14 +4,14 @@ import { isNumber } from '../guards/is-number';
 import { isPositive } from '../guards/is-positive';
 import { isString } from '../guards/is-string';
 import { isUndefined } from '../guards/is-undefined';
-import { or } from '../operators/or';
+import { or } from '../guards/or';
 
 class Foo {
     @Assert(isPositive)
-    @Assert(isNumber)
+    @Assert(() => isNumber)
     public static staticValue: number = 1;
 
-    @Assert(or(isString, isUndefined))
+    @Assert(or([ isString, isUndefined ]))
     public value?: string;
 
     @Assert(isBoolean, 'some name')

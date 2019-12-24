@@ -254,6 +254,25 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
     }
 }</code></pre>
 				<p>You can combine these guards to nest as deeply as needed.</p>
+				<p>Both <a href="globals.html#hasproperties">hasProperties</a> and <a href="globals.html#hasinterface">hasInterface</a> support a function form to support circular references:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Guard, hasInterface, isUndefined, or } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-keyword">interface</span> Parent {
+    child?: Child;
+}
+
+<span class="hljs-keyword">interface</span> Child {
+    parent: Parent;
+}
+
+<span class="hljs-keyword">const</span> isParent: Guard&lt;Parent&gt; = hasInterface&lt;Parent&gt;<span class="hljs-function">(<span class="hljs-params">'Parent', (<span class="hljs-params"></span>) =&gt; (<span class="hljs-params">{
+    child: or(<span class="hljs-params">[ isUndefined, isChild ]</span>),
+}</span>)</span>);
+
+<span class="hljs-params">const</span> <span class="hljs-params">isChild</span>: <span class="hljs-params">Guard</span>&lt;<span class="hljs-params">Child</span>&gt; = <span class="hljs-params">hasInterface</span>&lt;<span class="hljs-params">Child</span>&gt;(<span class="hljs-params">'Child', (<span class="hljs-params"></span>) =&gt; (<span class="hljs-params">{
+    parent: isParent,
+}</span>)</span>);</span></code></pre>
+				<p>Without the function wrappers this would result in an error as <code>isChild</code> is not defined at the time <code>isParent</code> is being defined.</p>
 				<a href="#composing-guards" id="composing-guards" style="color: inherit; text-decoration: none;">
 					<h3>Composing Guards</h3>
 				</a>
@@ -261,14 +280,14 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
 				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isNumber, isString, isUndefined } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
-    <span class="hljs-keyword">if</span> (or(isNumber, isString)(value)) {
+    <span class="hljs-keyword">if</span> (or([ isNumber, isString ])(value)) {
         <span class="hljs-comment">// Inside this block value has type 'number|string'</span>
         <span class="hljs-comment">// ...</span>
     }
 }
 
 <span class="hljs-comment">// You can also save the guard to call for later</span>
-<span class="hljs-keyword">const</span> isStringOrUndefined = or(isString, isUndefined);
+<span class="hljs-keyword">const</span> isStringOrUndefined = or([ isString, isUndefined ]);
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomethingElse</span>(<span class="hljs-params">value: unknown</span>) </span>{
     <span class="hljs-keyword">if</span> (isStringOrUndefined(value)) {
         <span class="hljs-comment">// Inside this block value has type 'string|undefined'</span>
@@ -292,7 +311,7 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
     bar: isNumber,
 }, <span class="hljs-string">'Bar'</span>);
 
-<span class="hljs-keyword">const</span> isFooAndBar = and(isFoo, isBar);
+<span class="hljs-keyword">const</span> isFooAndBar = and([ isFoo, isBar ]);
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
     <span class="hljs-keyword">if</span> (isFooAndBar(value)) {
@@ -341,15 +360,30 @@ assertValue(isFoo, myVar); <span class="hljs-comment">// throws AssertionError: 
 				<a href="#assert-property-decorator" id="assert-property-decorator" style="color: inherit; text-decoration: none;">
 					<h3>Assert Property Decorator</h3>
 				</a>
-				<p>Guardian also includes an <a href="globals.html#assert">Assert</a> decorator that can be used on class properties. This decorator converts a property to a getter/setter with a setter that calls <a href="globals.html#assertvalue">assertValue</a>. For example:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">class</span> MyClass {
-    <span class="hljs-meta">@Assert</span>(or(isEmail, isUndefined))
+				<p>Guardian also includes an <a href="globals.html#assert">Assert</a> decorator that can be used on class properties. This decorator converts a property (static or instance) to a getter/setter with a setter that calls <a href="globals.html#assertvalue">assertValue</a>. For example:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Assert } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-keyword">class</span> MyClass {
+    <span class="hljs-meta">@Assert</span>(or([ isEmail, isUndefined ]))
     <span class="hljs-keyword">public</span> email?: <span class="hljs-built_in">string</span>;
 }
 
 <span class="hljs-keyword">const</span> instance = <span class="hljs-keyword">new</span> MyClass();
 instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comment">// throws AssertionError: Expected 'MyClass#email' to be an email address or to be undefined but received: foo</span></code></pre>
-				<p>The decorator has the same signature as <a href="globals.html#assertvalue">assertValue</a> so the name and expectation can be overridden. The decorator also supports static properties.</p>
+				<p>The decorator has the same signature as <a href="globals.html#assertvalue">assertValue</a> so the name and expectation can be overridden.</p>
+				<p>You can also use a function that returns a guard in case you have to model a circular relationshop:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Assert, isInstanceOf } <span class="hljs-keyword">from</span> <span class="hljs-string">'guardian'</span>;
+
+<span class="hljs-keyword">class</span> Parent {
+    <span class="hljs-meta">@Assert</span>(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> isInstanceOf(Child))
+    <span class="hljs-keyword">public</span> child?: Child;
+}
+
+<span class="hljs-keyword">class</span> Child {
+    <span class="hljs-meta">@Assert</span>(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> isInstanceOf(Parent))
+    <span class="hljs-keyword">public</span> parent?: Parent;
+}</code></pre>
+				<p>Without the function wrapper there would be an error as <code>Child</code> is not defined when the decorator on <code>Parent</code> is called.</p>
 				<a href="#assert-unreachable" id="assert-unreachable" style="color: inherit; text-decoration: none;">
 					<h3>Assert Unreachable</h3>
 				</a>
@@ -390,14 +424,20 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 						</tr>
 					</thead>
 					<tbody><tr>
+							<td><a href="globals.html#and">and</a></td>
+							<td><strong>validators</strong>: T[] | function - An array of guards/validators</td>
+							<td>ExtractIntersection&lt;T&gt;</td>
+							<td>Create a new guard/validator from an intersection of guards/validators</td>
+						</tr>
+						<tr>
 							<td><a href="globals.html#hasinterface">hasInterface</a></td>
-							<td><strong>interfaceName</strong>: string - The interface name to report in the error message&lt;br /&gt;<strong>validators</strong>: InterfaceValidators&lt;T&gt; - The property validators</td>
+							<td><strong>interfaceName</strong>: string - The interface name to report in the error message<br /><strong>validators</strong>: InterfaceValidators&lt;T&gt; | function - The property validators (or function that returns them)</td>
 							<td>T</td>
 							<td>Creates a guard that tests if a value implements a specified interface</td>
 						</tr>
 						<tr>
 							<td><a href="globals.html#hasproperties">hasProperties</a></td>
-							<td><strong>validators</strong>: T - The property validators</td>
+							<td><strong>validators</strong>: T | function - An property validators (or function that returns them)</td>
 							<td>ExtractProperties&lt;T&gt;</td>
 							<td>Creates a guard that tests if a value is an object with properties matching the specified property validators</td>
 						</tr>
@@ -439,7 +479,7 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 						</tr>
 						<tr>
 							<td><a href="globals.html#isdeepequalto">isDeepEqualTo</a></td>
-							<td><strong>other</strong>: T - The object to compare values to&lt;br /&gt;<strong>strict</strong>: boolean - True to use strict equality (default) and false to use coercive equality</td>
+							<td><strong>other</strong>: T - The object to compare values to<br /><strong>strict</strong>: boolean - True to use strict equality (default) and false to use coercive equality</td>
 							<td>T</td>
 							<td>Creates a guard that tests if a value is equal to the specified value using the <a href="https://www.npmjs.com/package/deep-equal" class="external">deep-equal package</a></td>
 						</tr>
@@ -634,6 +674,12 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 							<td></td>
 							<td>unknown</td>
 							<td>Guard that tests if the value is an any unknown value (always true)</td>
+						</tr>
+						<tr>
+							<td><a href="globals.html#or">or</a></td>
+							<td><strong>validators</strong>: T[] | function - An array of guards/validators (or function that returns an array)</td>
+							<td>ExtractUnion&lt;T&gt;</td>
+							<td>Create a new guard/validator from a union of guards/validators</td>
 						</tr>
 						<tr>
 							<td><!-- guardrefstop --></td>

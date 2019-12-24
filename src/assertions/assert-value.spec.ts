@@ -21,5 +21,7 @@ describe(assertValue.name, () => {
         expect(() => assertValue(guardWithExpectation, { foo: true })).toThrow('Expected value to be something but received: {"foo":true}');
         // eslint-disable-next-line max-len
         expect(() => assertValue(guardWithExpectation, { foo: new Array(1000) })).toThrow('Expected value to be something but received: {"foo":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,nu...');
+
+        expect(() => assertValue(() => someGuard, 'some value')).toThrow('Expected value to match \'someGuard\' but received: some value');
     });
 });

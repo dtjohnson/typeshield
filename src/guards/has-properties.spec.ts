@@ -9,6 +9,9 @@ describe(hasProperties.name, () => {
         expect(hasProperties({ foo: isNumber })({})).toBe(false);
         expect(hasProperties({ foo: isNumber })({ foo: true })).toBe(false);
         expect(hasProperties({ foo: isNumber })({ foo: 5 })).toBe(true);
+
+        expect(hasProperties(() => ({ foo: isNumber }))({ foo: true })).toBe(false);
+        expect(hasProperties(() => ({ foo: isNumber }))({ foo: 5 })).toBe(true);
     });
 
     it('should throw with a clear message', () => {

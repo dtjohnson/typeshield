@@ -79,10 +79,11 @@ guardRefs.sort((a, b) => a.name > b.name ? 1 : -1);
 
 // Build the markdown table
 let table = guardRefs
-    .map(ref => `| [[${ref.name}]] | ${(ref.factoryParams ?? []).map(param => `__${param.name}__: ${param.typeRef ? `[[${param.type}]]` : param.type} - ${param.description}`).join('<br />')} | ${ref.returnTypeRef ? `[[${ref.returnType}]]` : ref.returnType} | ${ref.description}`)
+    .map(ref => `| [[${ref.name}]] | ${(ref.factoryParams ?? []).map(param => `__${param.name}__: ${param.typeRef ? `[[${param.type.replace(/\|/ug, '\\|')}]]` : param.type.replace(/\|/ug, '\\|')} - ${param.description}`).join('BREAK')} | ${ref.returnTypeRef ? `[[${ref.returnType}]]` : ref.returnType} | ${ref.description}`)
     .join('\n');
 
-table = `<!-- guardref -->\n| Name | Factory Params | Return Type | Description |\n| --- | --- | --- | --- |\n${table.replace(/</ug, '&lt;').replace(/>/ug, '&gt;')}\n<!-- guardrefstop -->`;
+table = `<!-- guardref -->\n| Name | Factory Params | Return Type | Description |\n| --- | --- | --- | --- |\n${table.replace(/</ug, '&lt;').replace(/>/ug, '&gt;')
+    .replace(/BREAK/ug, '<br />')}\n<!-- guardrefstop -->`;
 
 // Read in the readme, replace the placeholder text, and rewrite it.
 let readme = fs.readFileSync('README.md', 'utf8');

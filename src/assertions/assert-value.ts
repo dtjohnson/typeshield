@@ -15,7 +15,7 @@ const maxValueStrLength = 150;
  * @param name An optional name for the value to use in the error message
  * @param expectation An optional expectation string to use in the error message. Will override the expectation string attached to the guard.
  */
-export function assertValue<T>(guard: Guard<T>, value: unknown, name?: string, expectation?: string): asserts value is T;
+export function assertValue<T>(guard: Guard<T>|(() => Guard<T>), value: unknown, name?: string, expectation?: string): asserts value is T;
 /**
  * Asserts that a value satisfies a provided validator.
  * @param validator The validator to call with the value
@@ -23,11 +23,18 @@ export function assertValue<T>(guard: Guard<T>, value: unknown, name?: string, e
  * @param name An optional name for the value to use in the error message
  * @param expectation An optional expectation string to use in the error message. Will override the expectation string attached to the guard.
  */
-export function assertValue(validator: Validator, value: unknown, name?: string, expectation?: string): void;
-export function assertValue(validator: Validator, value: unknown, name?: string, expectation?: string): void {
-    assert(validator(value), () => {
+export function assertValue(validator: Validator|(() => Validator), value: unknown, name?: string, expectation?: string): void;
+export function assertValue(validator: Validator|(() => Validator), value: unknown, name?: string, expectation?: string): void {
+    let result = validator(value);
+
+    if (typeof result === 'function') {
+        validator = result;
+        result = validator(value);
+    }
+
+    assert(result, () => {
         name = name ? `'${name}'` : 'value';
-        expectation = expectation ?? getExpectation(validator);
+        expectation = expectation ?? getExpectation(validator as Validator);
         let valueStr = `${value}`;
         if (valueStr === `${{}}`) valueStr = JSON.stringify(value);
         if (valueStr.length > maxValueStrLength) valueStr = `${valueStr.substr(0, maxValueStrLength)}...`;

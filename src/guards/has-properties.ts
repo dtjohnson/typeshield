@@ -18,11 +18,12 @@ interface PropertyValidators {
 
 /**
  * Creates a guard that tests if a value is an object with properties matching the specified property validators
- * @param validators The property validators
+ * @param validators An property validators (or function that returns them)
  * @returns The guard
  */
-export function hasProperties<T extends PropertyValidators>(validators: T): Guard<ExtractProperties<T>> {
+export function hasProperties<T extends PropertyValidators>(validators: T|(() => T)): Guard<ExtractProperties<T>> {
     const guard = (value: unknown): value is ExtractProperties<T> => {
+        if (isFunction(validators)) validators = validators();
         if (!isObject(value) && !isFunction(value)) return false;
 
         const keys = Reflect.ownKeys(validators);

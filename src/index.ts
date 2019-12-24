@@ -8,6 +8,7 @@ export * from './assertions/assert';
 export * from './assertions/assertion-error';
 
 // guards
+export * from './guards/and';
 export * from './guards/has-interface';
 export * from './guards/has-properties';
 export * from './guards/is-any';
@@ -49,9 +50,6 @@ export * from './guards/is-string';
 export * from './guards/is-symbol';
 export * from './guards/is-undefined';
 export * from './guards/is-unknown';
-
-// operators
-export * from './operators/and';
-export * from './operators/or';
+export * from './guards/or';
 
 export * from './types';

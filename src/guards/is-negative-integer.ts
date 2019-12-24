@@ -1,7 +1,7 @@
 import { Guard } from '../types';
 import { Integer, isInteger } from './is-integer';
 import { Negative, isNegative } from './is-negative';
-import { and } from '../operators/and';
+import { and } from './and';
 
 /**
  * A number that is a negative integer
@@ -11,7 +11,7 @@ export type NegativeInteger = Negative & Integer;
 /**
  * @ignore
  */
-const guard = and(isNegative, isInteger);
+const guard = and([ isNegative, isInteger ]);
 
 /**
  * Guard that tests if the value is a negative integer

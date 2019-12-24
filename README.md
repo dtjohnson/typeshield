@@ -208,20 +208,42 @@ function doSomething(value: unknown) {
 ```
 You can combine these guards to nest as deeply as needed.
 
+Both [[hasProperties]] and [[hasInterface]] support a function form to support circular references:
+```ts
+import { Guard, hasInterface, isUndefined, or } from 'guardian';
+
+interface Parent {
+    child?: Child;
+}
+
+interface Child {
+    parent: Parent;
+}
+
+const isParent: Guard<Parent> = hasInterface<Parent>('Parent', () => ({
+    child: or([ isUndefined, isChild ]),
+}));
+
+const isChild: Guard<Child> = hasInterface<Child>('Child', () => ({
+    parent: isParent,
+}));
+```
+Without the function wrappers this would result in an error as `isChild` is not defined at the time `isParent` is being defined.
+
 ### Composing Guards
 Guardian comes with two operators ([[or]] and [[and]]) for easily combining guards together to create new guards. (In fact, many of the guards included in Guardian are created this way.) The [[or]] operator can be used to check if a value matches one of two or more guards.
 ```ts
 import { isNumber, isString, isUndefined } from 'guardian';
 
 function doSomething(value: unknown) {
-    if (or(isNumber, isString)(value)) {
+    if (or([ isNumber, isString ])(value)) {
         // Inside this block value has type 'number|string'
         // ...
     }
 }
 
 // You can also save the guard to call for later
-const isStringOrUndefined = or(isString, isUndefined);
+const isStringOrUndefined = or([ isString, isUndefined ]);
 function doSomethingElse(value: unknown) {
     if (isStringOrUndefined(value)) {
         // Inside this block value has type 'string|undefined'
@@ -248,7 +270,7 @@ const isBar = hasProperties<Bar>({
     bar: isNumber,
 }, 'Bar');
 
-const isFooAndBar = and(isFoo, isBar);
+const isFooAndBar = and([ isFoo, isBar ]);
 
 function doSomething(value: unknown) {
     if (isFooAndBar(value)) {
@@ -310,17 +332,35 @@ Most of the prebuilt guards in Guardian use this property to set more helpful me
 
 ### Assert Property Decorator
 
-Guardian also includes an [[Assert]] decorator that can be used on class properties. This decorator converts a property to a getter/setter with a setter that calls [[assertValue]]. For example:
+Guardian also includes an [[Assert]] decorator that can be used on class properties. This decorator converts a property (static or instance) to a getter/setter with a setter that calls [[assertValue]]. For example:
 ```ts
+import { Assert } from 'guardian';
+
 class MyClass {
-    @Assert(or(isEmail, isUndefined))
+    @Assert(or([ isEmail, isUndefined ]))
     public email?: string;
 }
 
 const instance = new MyClass();
 instance.email = 'foo'; // throws AssertionError: Expected 'MyClass#email' to be an email address or to be undefined but received: foo
 ```
-The decorator has the same signature as [[assertValue]] so the name and expectation can be overridden. The decorator also supports static properties.
+The decorator has the same signature as [[assertValue]] so the name and expectation can be overridden.
+
+You can also use a function that returns a guard in case you have to model a circular relationshop:
+```ts
+import { Assert, isInstanceOf } from 'guardian';
+
+class Parent {
+    @Assert(() => isInstanceOf(Child))
+    public child?: Child;
+}
+
+class Child {
+    @Assert(() => isInstanceOf(Parent))
+    public parent?: Parent;
+}
+```
+Without the function wrapper there would be an error as `Child` is not defined when the decorator on `Parent` is called.
 
 ### Assert Unreachable
 
@@ -355,15 +395,16 @@ function doSomething(arg: All): string {
 <!-- guardref -->
 | Name | Factory Params | Return Type | Description |
 | --- | --- | --- | --- |
-| [[hasInterface]] | __interfaceName__: string - The interface name to report in the error message&lt;br /&gt;__validators__: InterfaceValidators&lt;T&gt; - The property validators | T | Creates a guard that tests if a value implements a specified interface
-| [[hasProperties]] | __validators__: T - The property validators | ExtractProperties&lt;T&gt; | Creates a guard that tests if a value is an object with properties matching the specified property validators
+| [[and]] | __validators__: T[] \| function - An array of guards/validators | ExtractIntersection&lt;T&gt; | Create a new guard/validator from an intersection of guards/validators
+| [[hasInterface]] | __interfaceName__: string - The interface name to report in the error message<br />__validators__: InterfaceValidators&lt;T&gt; \| function - The property validators (or function that returns them) | T | Creates a guard that tests if a value implements a specified interface
+| [[hasProperties]] | __validators__: T \| function - An property validators (or function that returns them) | ExtractProperties&lt;T&gt; | Creates a guard that tests if a value is an object with properties matching the specified property validators
 | [[isAny]] |  | any | Guard that tests if the value is an any value (always true)
 | [[isArray]] |  | unknown[] | Guard that tests if the value is an array
 | [[isBigInt]] |  | bigint | Guard that tests if the value is an big integer
 | [[isBoolean]] |  | boolean | Guard that tests if the value is a boolean
 | [[isComparable]] |  | [[Comparable]] | Guard that tests if the value implements the [[Comparable]] interface
 | [[isDate]] |  | Date | Guard that tests if the value is an instance of Date
-| [[isDeepEqualTo]] | __other__: T - The object to compare values to&lt;br /&gt;__strict__: boolean - True to use strict equality (default) and false to use coercive equality | T | Creates a guard that tests if a value is equal to the specified value using the [deep-equal package]{@link https://www.npmjs.com/package/deep-equal}
+| [[isDeepEqualTo]] | __other__: T - The object to compare values to<br />__strict__: boolean - True to use strict equality (default) and false to use coercive equality | T | Creates a guard that tests if a value is equal to the specified value using the [deep-equal package]{@link https://www.npmjs.com/package/deep-equal}
 | [[isDefined]] |  | NonNullable&lt;T&gt; | Guard that tests if the value is not null and not undefined
 | [[isEach]] | __eachGuard__: Guard&lt;T&gt; - The guard used for each item in the array. | T[] | Creates a guard that tests if a value is an array and that each value in the array satisfies the given guard.
 | [[isEmail]] |  | [[Email]] | Guard that tests if the value is an email address
@@ -396,4 +437,5 @@ function doSomething(arg: All): string {
 | [[isSymbol]] |  | symbol | Guard that tests if the value is a symbol
 | [[isUndefined]] |  | undefined | Guard that tests if the value is undefined
 | [[isUnknown]] |  | unknown | Guard that tests if the value is an any unknown value (always true)
+| [[or]] | __validators__: T[] \| function - An array of guards/validators (or function that returns an array) | ExtractUnion&lt;T&gt; | Create a new guard/validator from a union of guards/validators
 <!-- guardrefstop -->

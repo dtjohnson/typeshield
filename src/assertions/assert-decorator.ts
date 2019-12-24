@@ -9,7 +9,7 @@ interface ValidatorInfo {
     /**
      * The validator
      */
-    validator: Validator;
+    validator: Validator|(() => Validator);
 
     /**
      * The name to use in the error
@@ -29,7 +29,7 @@ interface ValidatorInfo {
  * @param expectation An expection message to override the guard/validator expectation
  * @returns The decorator.
  */
-export function Assert(validator: Validator, name?: string, expectation?: string): PropertyDecorator {
+export function Assert(validator: Validator|(() => Validator), name?: string, expectation?: string): PropertyDecorator {
     return (target: any, propertyKey) => {
         // Create the key for the private backing field by prefixing an underscore
         const key = `_${propertyKey.toString()}`;

@@ -1,12 +1,12 @@
 import { Guard } from 'types';
 import { isNull } from './is-null';
 import { isUndefined } from './is-undefined';
-import { or } from '../operators/or';
+import { or } from './or';
 
 /**
  * @ignore
  */
-const guard = or(isNull, isUndefined);
+const guard = or([ isNull, isUndefined ]);
 
 /**
  * Guard that tests if the value is null or undefined

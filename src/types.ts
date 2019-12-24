@@ -5,7 +5,7 @@ interface HasExpectation {
     /**
      * An expectation string to use for error messages in assertions
      */
-    expectation?: string;
+    expectation?: string|(() => string);
 }
 
 /**
