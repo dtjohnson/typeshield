@@ -1,4 +1,4 @@
-import { Guard } from 'types';
+import { Guard } from '../types';
 import { isNull } from './is-null';
 import { isUndefined } from './is-undefined';
 import { or } from './or';
