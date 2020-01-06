@@ -1,6 +1,6 @@
-# Guardian
+# TypeGuards
 
-Guardian is a collection of composable TypeScript/JavaScript type guards and assertions. Assertions use the new [assertion function](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions) types in TypeScript 3.7.
+TypeGuards is a collection of composable TypeScript/JavaScript type guards and assertions. Assertions use the new [assertion function](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions) types in TypeScript 3.7.
 
 ## Table of Contents
 
@@ -22,23 +22,23 @@ Guardian is a collection of composable TypeScript/JavaScript type guards and ass
 <!-- tocstop -->
 
 ## Installation
-Guardian can be installed like any other npm package.
+TypeGuards can be installed like any other npm package.
 ```bash
-npm install guardian
+npm install typeguards
 ```
 
 It can then be imported into TypeScript or ES6 JavaScript (with Webpack or Rollup):
 ```ts
-import { ... } from 'guardian';
+import { ... } from 'typeguards';
 ```
 
 It can also be used in plain Node.js:
 ```js
-const { ... } = require('guardian');
+const { ... } = require('typeguards');
 ```
 or
 ```js
-const guardian = require('guardian');
+const typeguards = require('typeguards');
 ```
 
 ## Guards
@@ -49,13 +49,13 @@ function (value: unknown): value is Foo {
     // Perform logic to determine if the value is indeed a 'Foo' and return true if it is, false otherwise.
 }
 ```
-Guardian exposes the [[Guard]] type to capture this. It also exposes a more general [[Validator]] type, which is just a function that takes an unknown value and returns a boolean.
+TypeGuards exposes the [[Guard]] type to capture this. It also exposes a more general [[Validator]] type, which is just a function that takes an unknown value and returns a boolean.
 
 ### Prebuilt Guards
 
-Guardian includes a large number of prebuilt guards. A full list can be found in the [Guard Reference](#guard-reference). An example:
+TypeGuards includes a large number of prebuilt guards. A full list can be found in the [Guard Reference](#guard-reference). An example:
 ```ts
-import { isDate } from 'guardian';
+import { isDate } from 'typeguards';
 
 function doSomething(value: unknown) {
     if (isDate(value)) {
@@ -65,9 +65,9 @@ function doSomething(value: unknown) {
 }
 ```
 
-Some Guardian functions are factories that require specifying an additional value in order to generate a guard. For example:
+Some TypeGuards functions are factories that require specifying an additional value in order to generate a guard. For example:
 ```ts
-import { isStringContaining } from 'guardian';
+import { isStringContaining } from 'typeguards';
 
 function doSomething(value: unknown) {
     if (isStringContaining('foo')(value)) {
@@ -88,7 +88,7 @@ function doSomethingElse(value: unknown) {
 
 Some guards return tagged primitive types. These are primitive types that are combined with a special tag type that can restrict usage. For example, the [[isInteger]] guard will type a variable as an [[Integer]], which is just a number with an additional tag indicating that we know it is an integer.
 ```ts
-import { isInteger, Integer } from 'guardian'
+import { isInteger, Integer } from 'typeguards'
 
 function doSomethingWithNumber(value: number) {
     // ...
@@ -117,7 +117,7 @@ There are several guards used to compare values with others. The correct one to 
 
 Here is an example of a custom class implementing [[Equatable]] and [[Comparable]]:
 ```ts
-import { Comparable, ComparisonResult, Equatable, isGreaterThan, isInstanceOf } from 'guardian';
+import { Comparable, ComparisonResult, Equatable, isGreaterThan, isInstanceOf } from 'typeguards';
 
 class Duration implements Equatable, Comparable {
     public hours: number = 0;
@@ -155,7 +155,7 @@ isGreaterThanZeroDuration(new Duration(0, -3)); // false
 ### Arrays
 Items in arrays can be checked using the [[isEach]] guard factory. The guard will first check that the value is an array and will then check each item in the array against the specified guard.
 ```ts
-import { isEach, isNumber } from 'guardian';
+import { isEach, isNumber } from 'typeguards';
 
 const isArrayOfNumbers = isEach(isNumber);
 
@@ -170,7 +170,7 @@ function doSomething(value: unknown) {
 ### Object Properties
 Similarly, you can check the properties of an object using the [[hasProperties]] guard factory:
 ```ts
-import { hasProperties, isString } from 'guardian';
+import { hasProperties, isString } from 'typeguards';
 
 const hasFooStringProperty = hasProperties({
     foo: isString,
@@ -187,7 +187,7 @@ function doSomething(value: unknown) {
 
 In the previous example, the guard verifies that the value has the properties specified and infers the type of the object from the guards. Often, however, you have an interface and you want to verify that some object matches the interface. In this case, you can use the very similar [[hasInterface]] guard factory. In this case you specify the interface as a type parameter, and you then must specify guards that are consistent with the interface. This makes the guard safe from refactoring as renaming a property or changing its type will result in an error. Here is an example:
 ```ts
-import { hasInterface, isString } from 'guardian';
+import { hasInterface, isString } from 'typeguards';
 
 interface Foo {
     foo: string;
@@ -210,7 +210,7 @@ You can combine these guards to nest as deeply as needed.
 
 Both [[hasProperties]] and [[hasInterface]] support a function form to support circular references:
 ```ts
-import { Guard, hasInterface, isUndefined, or } from 'guardian';
+import { Guard, hasInterface, isUndefined, or } from 'typeguards';
 
 interface Parent {
     child?: Child;
@@ -231,9 +231,9 @@ const isChild: Guard<Child> = hasInterface<Child>('Child', () => ({
 Without the function wrappers this would result in an error as `isChild` is not defined at the time `isParent` is being defined.
 
 ### Composing Guards
-Guardian comes with two operators ([[or]] and [[and]]) for easily combining guards together to create new guards. (In fact, many of the guards included in Guardian are created this way.) The [[or]] operator can be used to check if a value matches one of two or more guards.
+TypeGuards comes with two operators ([[or]] and [[and]]) for easily combining guards together to create new guards. (In fact, many of the guards included in TypeGuards are created this way.) The [[or]] operator can be used to check if a value matches one of two or more guards.
 ```ts
-import { isNumber, isString, isUndefined } from 'guardian';
+import { isNumber, isString, isUndefined } from 'typeguards';
 
 function doSomething(value: unknown) {
     if (or([ isNumber, isString ])(value)) {
@@ -254,7 +254,7 @@ function doSomethingElse(value: unknown) {
 
 Simlarly, the [[and]] operator creates an intersection of types.
 ```ts
-import { hasProperties, isBoolean, isString } from 'guardian';
+import { hasProperties, isBoolean, isString } from 'typeguards';
 
 interface Foo {
     foo: boolean;
@@ -281,9 +281,9 @@ function doSomething(value: unknown) {
 
 ## Assertions
 
-TypeScript introduced type support for [assertion functions](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions) in release 3.7. Guardian includes the [[assert]] function to handle arbitrary assertion conditions. If the condition is met, execution continues, if not an [[AssertionError]] is thrown. Starting with TypeScript 3.7, the type engine also knows how to restrict the types after these assertions.
+TypeScript introduced type support for [assertion functions](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions) in release 3.7. TypeGuards includes the [[assert]] function to handle arbitrary assertion conditions. If the condition is met, execution continues, if not an [[AssertionError]] is thrown. Starting with TypeScript 3.7, the type engine also knows how to restrict the types after these assertions.
 ```ts
-import { assert } from 'guardian';
+import { assert } from 'typeguards';
 
 function doSomething(value: unknown) {
     // The condition argument here is whatever you want.
@@ -297,9 +297,9 @@ You can also specify a custom error message if you want to control the error mes
 
 ### Value Assertions
 
-Guardian also includes an [[assertValue]] function if you want to make assertions about the value of a variable. This form of the assertion makes it each to throw meaningful error messages. The first value of the function is any [[Guard]] or [[Validator]], the second is the value to test, and the 3rd is an optional name for the variable.
+TypeGuards also includes an [[assertValue]] function if you want to make assertions about the value of a variable. This form of the assertion makes it each to throw meaningful error messages. The first value of the function is any [[Guard]] or [[Validator]], the second is the value to test, and the 3rd is an optional name for the variable.
 ```ts
-import { assertValue, isString } from 'guardian';
+import { assertValue, isString } from 'typeguards';
 
 const myVar: number = 5;
 assertValue(isString, myVar, 'myVar'); // throws AssertionError: Expected 'myVar' to be a string but received: 5
@@ -307,7 +307,7 @@ assertValue(isString, myVar, 'myVar'); // throws AssertionError: Expected 'myVar
 
 This works for your custom guards as well:
 ```ts
-import { assertValue } from 'guardian';
+import { assertValue } from 'typeguards';
 
 function isFoo(value; unknown): value is Foo {
     // Implement here
@@ -328,13 +328,13 @@ The downside of this approach is that you need to specify the expectation each t
 // From now on:
 assertValue(isFoo, myVar); // throws AssertionError: Expected value to be a Foo but received: 5
 ```
-Most of the prebuilt guards in Guardian use this property to set more helpful messages, which is why the example with [[isString]] above looked good.
+Most of the prebuilt guards in TypeGuards use this property to set more helpful messages, which is why the example with [[isString]] above looked good.
 
 ### Assert Property Decorator
 
-Guardian also includes an [[Assert]] decorator that can be used on class properties. This decorator converts a property (static or instance) to a getter/setter with a setter that calls [[assertValue]]. For example:
+TypeGuards also includes an [[Assert]] decorator that can be used on class properties. This decorator converts a property (static or instance) to a getter/setter with a setter that calls [[assertValue]]. For example:
 ```ts
-import { Assert } from 'guardian';
+import { Assert } from 'typeguards';
 
 class MyClass {
     @Assert(or([ isEmail, isUndefined ]))
@@ -348,7 +348,7 @@ The decorator has the same signature as [[assertValue]] so the name and expectat
 
 You can also use a function that returns a guard in case you have to model a circular relationshop:
 ```ts
-import { Assert, isInstanceOf } from 'guardian';
+import { Assert, isInstanceOf } from 'typeguards';
 
 class Parent {
     @Assert(() => isInstanceOf(Child))
@@ -364,7 +364,7 @@ Without the function wrapper there would be an error as `Child` is not defined w
 
 ### Assert Unreachable
 
-Finally, Guardian includes an [[assertUnreachable]] function that will always throw if called. This is useful for protecting code when called from JavaScript (i.e. no type checking) or for ensuring fully discriminated unions to be safe from refactoring.
+Finally, TypeGuards includes an [[assertUnreachable]] function that will always throw if called. This is useful for protecting code when called from JavaScript (i.e. no type checking) or for ensuring fully discriminated unions to be safe from refactoring.
 ```ts
 interface A {
     type: 'a';

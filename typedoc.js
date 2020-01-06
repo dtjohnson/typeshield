@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'Guardian Documentation',
+    name: 'TypeGuards Documentation',
     mode: 'file',
     excludePrivate: true,
     excludeProtected: true,
