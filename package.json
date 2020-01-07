@@ -1,6 +1,6 @@
 {
   "name": "typeshield",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A collection of composable TypeScript/JavaScript type guards and assertions",
   "author": "Dave T. Johnson <dave@dtjohnson.net>",
   "homepage": "https://github.com/dtjohnson/typeshield",
