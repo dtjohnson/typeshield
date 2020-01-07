@@ -49,6 +49,6 @@
     "serve-docs": "http-server -c-1 -o docs/",
     "test": "jest --no-cache",
     "lint": "eslint --fix \"src/**/*.ts\"",
-    "prepublishOnly": "npm run docs && npm run build"
+    "prepublishOnly": "npm run build"
   }
 }
