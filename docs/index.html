@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TypeGuards Documentation</title>
+	<title>TypeShield Documentation</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">TypeGuards Documentation</a>
+					<a href="index.html" class="title">TypeShield Documentation</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -56,7 +56,7 @@
 					<a href="globals.html">Globals</a>
 				</li>
 			</ul>
-			<h1> TypeGuards Documentation</h1>
+			<h1> TypeShield Documentation</h1>
 		</div>
 	</div>
 </header>
@@ -64,10 +64,10 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<a href="#typeguards" id="typeguards" style="color: inherit; text-decoration: none;">
-					<h1>TypeGuards</h1>
+				<a href="#typeshield" id="typeshield" style="color: inherit; text-decoration: none;">
+					<h1>TypeShield</h1>
 				</a>
-				<p>TypeGuards is a collection of composable TypeScript/JavaScript type guards and assertions. Assertions use the new <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions">assertion function</a> types in TypeScript 3.7.</p>
+				<p>TypeShield is a collection of composable TypeScript/JavaScript type guards and assertions. Assertions use the new <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions">assertion function</a> types in TypeScript 3.7.</p>
 				<a href="#table-of-contents" id="table-of-contents" style="color: inherit; text-decoration: none;">
 					<h2>Table of Contents</h2>
 				</a>
@@ -94,14 +94,14 @@
 				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
 					<h2>Installation</h2>
 				</a>
-				<p>TypeGuards can be installed like any other npm package.</p>
-				<pre><code class="language-bash">npm install typeguards</code></pre>
+				<p>TypeShield can be installed like any other npm package.</p>
+				<pre><code class="language-bash">npm install typeshield</code></pre>
 				<p>It can then be imported into TypeScript or ES6 JavaScript (with Webpack or Rollup):</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ... } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;</code></pre>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { ... } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;</code></pre>
 				<p>It can also be used in plain Node.js:</p>
-				<pre><code class="language-js"><span class="hljs-keyword">const</span> { ... } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'typeguards'</span>);</code></pre>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> { ... } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'typeshield'</span>);</code></pre>
 				<p>or</p>
-				<pre><code class="language-js"><span class="hljs-keyword">const</span> typeguards = <span class="hljs-built_in">require</span>(<span class="hljs-string">'typeguards'</span>);</code></pre>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> typeshield = <span class="hljs-built_in">require</span>(<span class="hljs-string">'typeshield'</span>);</code></pre>
 				<a href="#guards" id="guards" style="color: inherit; text-decoration: none;">
 					<h2>Guards</h2>
 				</a>
@@ -109,12 +109,12 @@
 				<pre><code class="language-ts"><span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">value: unknown</span>): <span class="hljs-title">value</span> <span class="hljs-title">is</span> <span class="hljs-title">Foo</span> </span>{
     <span class="hljs-comment">// Perform logic to determine if the value is indeed a 'Foo' and return true if it is, false otherwise.</span>
 }</code></pre>
-				<p>TypeGuards exposes the <a href="globals.html#guard">Guard</a> type to capture this. It also exposes a more general <a href="globals.html#validator">Validator</a> type, which is just a function that takes an unknown value and returns a boolean.</p>
+				<p>TypeShield exposes the <a href="globals.html#guard">Guard</a> type to capture this. It also exposes a more general <a href="globals.html#validator">Validator</a> type, which is just a function that takes an unknown value and returns a boolean.</p>
 				<a href="#prebuilt-guards" id="prebuilt-guards" style="color: inherit; text-decoration: none;">
 					<h3>Prebuilt Guards</h3>
 				</a>
-				<p>TypeGuards includes a large number of prebuilt guards. A full list can be found in the <a href="#guard-reference">Guard Reference</a>. An example:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isDate } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<p>TypeShield includes a large number of prebuilt guards. A full list can be found in the <a href="#guard-reference">Guard Reference</a>. An example:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isDate } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
     <span class="hljs-keyword">if</span> (isDate(value)) {
@@ -122,8 +122,8 @@
         <span class="hljs-comment">// ...</span>
     }
 }</code></pre>
-				<p>Some TypeGuards functions are factories that require specifying an additional value in order to generate a guard. For example:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isStringContaining } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<p>Some TypeShield functions are factories that require specifying an additional value in order to generate a guard. For example:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isStringContaining } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
     <span class="hljs-keyword">if</span> (isStringContaining(<span class="hljs-string">'foo'</span>)(value)) {
@@ -141,7 +141,7 @@
     }
 }</code></pre>
 				<p>Some guards return tagged primitive types. These are primitive types that are combined with a special tag type that can restrict usage. For example, the <a href="globals.html#isinteger">isInteger</a> guard will type a variable as an <a href="globals.html#integer">Integer</a>, which is just a number with an additional tag indicating that we know it is an integer.</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isInteger, Integer } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isInteger, Integer } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomethingWithNumber</span>(<span class="hljs-params">value: <span class="hljs-built_in">number</span></span>) </span>{
     <span class="hljs-comment">// ...</span>
@@ -170,7 +170,7 @@ doSomethingWithInteger(foo); <span class="hljs-comment">// Error! Argument of ty
 					<li><a href="globals.html#isgreaterthan">isGreaterThan</a>, <a href="globals.html#isgreaterthanorequalto">isGreaterThanOrEqualTo</a>, <a href="globals.html#islessthan">isLessThan</a>, <a href="globals.html#islessthanorequalto">isLessThanOrEqualTo</a> - Compares objects for ordering using the <a href="interfaces/comparable.html">Comparable</a> interface or the comparison operators if not implemented. (Note that using <code>&gt;=</code> or <code>&lt;=</code> on objects that do not implement custom <code>valueOf</code> or <code>toString</code> methods will always result in <code>true</code> as their values are compared by string and have the same string representation.)</li>
 				</ul>
 				<p>Here is an example of a custom class implementing <a href="interfaces/equatable.html">Equatable</a> and <a href="interfaces/comparable.html">Comparable</a>:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Comparable, ComparisonResult, Equatable, isGreaterThan, isInstanceOf } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Comparable, ComparisonResult, Equatable, isGreaterThan, isInstanceOf } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-keyword">class</span> Duration <span class="hljs-keyword">implements</span> Equatable, Comparable {
     <span class="hljs-keyword">public</span> hours: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
@@ -207,7 +207,7 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
 					<h3>Arrays</h3>
 				</a>
 				<p>Items in arrays can be checked using the <a href="globals.html#iseach">isEach</a> guard factory. The guard will first check that the value is an array and will then check each item in the array against the specified guard.</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isEach, isNumber } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isEach, isNumber } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-keyword">const</span> isArrayOfNumbers = isEach(isNumber);
 
@@ -221,7 +221,7 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
 					<h3>Object Properties</h3>
 				</a>
 				<p>Similarly, you can check the properties of an object using the <a href="globals.html#hasproperties">hasProperties</a> guard factory:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasProperties, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasProperties, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-keyword">const</span> hasFooStringProperty = hasProperties({
     foo: isString,
@@ -235,7 +235,7 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
     }
 }</code></pre>
 				<p>In the previous example, the guard verifies that the value has the properties specified and infers the type of the object from the guards. Often, however, you have an interface and you want to verify that some object matches the interface. In this case, you can use the very similar <a href="globals.html#hasinterface">hasInterface</a> guard factory. In this case you specify the interface as a type parameter, and you then must specify guards that are consistent with the interface. This makes the guard safe from refactoring as renaming a property or changing its type will result in an error. Here is an example:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasInterface, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasInterface, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-keyword">interface</span> Foo {
     foo: <span class="hljs-built_in">string</span>;
@@ -255,7 +255,7 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
 }</code></pre>
 				<p>You can combine these guards to nest as deeply as needed.</p>
 				<p>Both <a href="globals.html#hasproperties">hasProperties</a> and <a href="globals.html#hasinterface">hasInterface</a> support a function form to support circular references:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Guard, hasInterface, isUndefined, or } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Guard, hasInterface, isUndefined, or } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-keyword">interface</span> Parent {
     child?: Child;
@@ -276,8 +276,8 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
 				<a href="#composing-guards" id="composing-guards" style="color: inherit; text-decoration: none;">
 					<h3>Composing Guards</h3>
 				</a>
-				<p>TypeGuards comes with two operators (<a href="globals.html#or">or</a> and <a href="globals.html#and">and</a>) for easily combining guards together to create new guards. (In fact, many of the guards included in TypeGuards are created this way.) The <a href="globals.html#or">or</a> operator can be used to check if a value matches one of two or more guards.</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isNumber, isString, isUndefined } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<p>TypeShield comes with two operators (<a href="globals.html#or">or</a> and <a href="globals.html#and">and</a>) for easily combining guards together to create new guards. (In fact, many of the guards included in TypeShield are created this way.) The <a href="globals.html#or">or</a> operator can be used to check if a value matches one of two or more guards.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { isNumber, isString, isUndefined } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
     <span class="hljs-keyword">if</span> (or([ isNumber, isString ])(value)) {
@@ -295,7 +295,7 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
     }
 }</code></pre>
 				<p>Simlarly, the <a href="globals.html#and">and</a> operator creates an intersection of types.</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasProperties, isBoolean, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { hasProperties, isBoolean, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-keyword">interface</span> Foo {
     foo: <span class="hljs-built_in">boolean</span>;
@@ -321,8 +321,8 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
 				<a href="#assertions" id="assertions" style="color: inherit; text-decoration: none;">
 					<h2>Assertions</h2>
 				</a>
-				<p>TypeScript introduced type support for <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions">assertion functions</a> in release 3.7. TypeGuards includes the <a href="globals.html#assert">assert</a> function to handle arbitrary assertion conditions. If the condition is met, execution continues, if not an <a href="classes/assertionerror.html">AssertionError</a> is thrown. Starting with TypeScript 3.7, the type engine also knows how to restrict the types after these assertions.</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { assert } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<p>TypeScript introduced type support for <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#assertion-functions">assertion functions</a> in release 3.7. TypeShield includes the <a href="globals.html#assert">assert</a> function to handle arbitrary assertion conditions. If the condition is met, execution continues, if not an <a href="classes/assertionerror.html">AssertionError</a> is thrown. Starting with TypeScript 3.7, the type engine also knows how to restrict the types after these assertions.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { assert } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">doSomething</span>(<span class="hljs-params">value: unknown</span>) </span>{
     <span class="hljs-comment">// The condition argument here is whatever you want.</span>
@@ -335,13 +335,13 @@ isGreaterThanZeroDuration(<span class="hljs-keyword">new</span> Duration(<span c
 				<a href="#value-assertions" id="value-assertions" style="color: inherit; text-decoration: none;">
 					<h3>Value Assertions</h3>
 				</a>
-				<p>TypeGuards also includes an <a href="globals.html#assertvalue">assertValue</a> function if you want to make assertions about the value of a variable. This form of the assertion makes it each to throw meaningful error messages. The first value of the function is any <a href="globals.html#guard">Guard</a> or <a href="globals.html#validator">Validator</a>, the second is the value to test, and the 3rd is an optional name for the variable.</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { assertValue, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<p>TypeShield also includes an <a href="globals.html#assertvalue">assertValue</a> function if you want to make assertions about the value of a variable. This form of the assertion makes it each to throw meaningful error messages. The first value of the function is any <a href="globals.html#guard">Guard</a> or <a href="globals.html#validator">Validator</a>, the second is the value to test, and the 3rd is an optional name for the variable.</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { assertValue, isString } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-keyword">const</span> myVar: <span class="hljs-built_in">number</span> = <span class="hljs-number">5</span>;
 assertValue(isString, myVar, <span class="hljs-string">'myVar'</span>); <span class="hljs-comment">// throws AssertionError: Expected 'myVar' to be a string but received: 5</span></code></pre>
 				<p>This works for your custom guards as well:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { assertValue } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { assertValue } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isFoo</span>(<span class="hljs-params">value; unknown</span>): <span class="hljs-title">value</span> <span class="hljs-title">is</span> <span class="hljs-title">Foo</span> </span>{
     <span class="hljs-comment">// Implement here</span>
@@ -356,12 +356,12 @@ assertValue(isFoo, myVar); <span class="hljs-comment">// throws AssertionError: 
 
 <span class="hljs-comment">// From now on:</span>
 assertValue(isFoo, myVar); <span class="hljs-comment">// throws AssertionError: Expected value to be a Foo but received: 5</span></code></pre>
-				<p>Most of the prebuilt guards in TypeGuards use this property to set more helpful messages, which is why the example with <a href="globals.html#isstring">isString</a> above looked good.</p>
+				<p>Most of the prebuilt guards in TypeShield use this property to set more helpful messages, which is why the example with <a href="globals.html#isstring">isString</a> above looked good.</p>
 				<a href="#assert-property-decorator" id="assert-property-decorator" style="color: inherit; text-decoration: none;">
 					<h3>Assert Property Decorator</h3>
 				</a>
-				<p>TypeGuards also includes an <a href="globals.html#assert">Assert</a> decorator that can be used on class properties. This decorator converts a property (static or instance) to a getter/setter with a setter that calls <a href="globals.html#assertvalue">assertValue</a>. For example:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Assert } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<p>TypeShield also includes an <a href="globals.html#assert">Assert</a> decorator that can be used on class properties. This decorator converts a property (static or instance) to a getter/setter with a setter that calls <a href="globals.html#assertvalue">assertValue</a>. For example:</p>
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Assert } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-keyword">class</span> MyClass {
     <span class="hljs-meta">@Assert</span>(or([ isEmail, isUndefined ]))
@@ -372,7 +372,7 @@ assertValue(isFoo, myVar); <span class="hljs-comment">// throws AssertionError: 
 instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comment">// throws AssertionError: Expected 'MyClass#email' to be an email address or to be undefined but received: foo</span></code></pre>
 				<p>The decorator has the same signature as <a href="globals.html#assertvalue">assertValue</a> so the name and expectation can be overridden.</p>
 				<p>You can also use a function that returns a guard in case you have to model a circular relationshop:</p>
-				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Assert, isInstanceOf } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeguards'</span>;
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> { Assert, isInstanceOf } <span class="hljs-keyword">from</span> <span class="hljs-string">'typeshield'</span>;
 
 <span class="hljs-keyword">class</span> Parent {
     <span class="hljs-meta">@Assert</span>(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> isInstanceOf(Child))
@@ -387,7 +387,7 @@ instance.email = <span class="hljs-string">'foo'</span>; <span class="hljs-comme
 				<a href="#assert-unreachable" id="assert-unreachable" style="color: inherit; text-decoration: none;">
 					<h3>Assert Unreachable</h3>
 				</a>
-				<p>Finally, TypeGuards includes an <a href="globals.html#assertunreachable">assertUnreachable</a> function that will always throw if called. This is useful for protecting code when called from JavaScript (i.e. no type checking) or for ensuring fully discriminated unions to be safe from refactoring.</p>
+				<p>Finally, TypeShield includes an <a href="globals.html#assertunreachable">assertUnreachable</a> function that will always throw if called. This is useful for protecting code when called from JavaScript (i.e. no type checking) or for ensuring fully discriminated unions to be safe from refactoring.</p>
 				<pre><code class="language-ts"><span class="hljs-keyword">interface</span> A {
     <span class="hljs-keyword">type</span>: <span class="hljs-string">'a'</span>;
 }

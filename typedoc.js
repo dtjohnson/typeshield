@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'TypeGuards Documentation',
+    name: 'TypeShield Documentation',
     mode: 'file',
     excludePrivate: true,
     excludeProtected: true,
